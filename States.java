@@ -11,7 +11,8 @@ public class States {
 
         public State(String name, Map<String, State> transitions) {
             this.name = name;
-            this.transitions = transitions;
+            //create states here in the constructor
         }
+
     }
 }
