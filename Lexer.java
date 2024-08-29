@@ -14,12 +14,14 @@ public class Lexer {
     public String runLexer() {
         String tokenisedInputStream = "<TOKENSTREAM>\n";
         Integer indexOfInput = 0;
+        Token token = new Token();
 
         //Continuously read the input stream
         while (indexOfInput < inputStream.length() ) {
             //get the current character
             char currentChar = inputStream.charAt(indexOfInput);
 
+            tokenisedInputStream += token.toXML();
         }
 
         tokenisedInputStream += "</TOKENSTREAM>\n";
