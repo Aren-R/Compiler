@@ -10,11 +10,31 @@ public class States {
         currentState = root;
     }
 
+    public State transition(String c) {
+        if (c == " " && currentState.isAccepting) { //space found, is accepting, create token and continue
+            State oldState = currentState;
+            resetDFA();
+            return oldState;
+        } else {
+            if (c == " " && !currentState.isAccepting) {
+                State errorState = new State();
+                errorState.classType = "ERROR";
+                return errorState;
+            }
+        }
+
+        //no space
+        State nextState = currentState.getNextState(c);
+        currentState = nextState;
+        return nextState;
+    }
+
+
     //Create all DFA states here
     public States() {
 
 
-        this.states = new State[108];
+        this.states = new State[109];
         for (int x = 0; x < states.length; x++) {
             states[x] = new State();
         }
@@ -283,7 +303,13 @@ public class States {
         }
 
         public State getNextState(String c) {
-            return transitions.get(c);
+            if (transitions.containsKey(c)) {
+                return transitions.get(c);
+            } else {
+                State errorState = new State();
+                errorState.classType = "ERROR";
+                return errorState;
+            }
         }
 
         public boolean isAccepting() {

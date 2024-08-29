@@ -1,8 +1,10 @@
 public class Lexer {
     public String inputStream; // The code that has to be lexed
+    public States DFA; 
 
     public Lexer() {
         this.inputStream = "";
+        this.DFA = new States();
     }
 
     // Set the code that has to be lexed
@@ -18,12 +20,27 @@ public class Lexer {
 
         //Continuously read the input stream
         while (indexOfInput < inputStream.length() ) {
-            //get the current character
-            char currentChar = inputStream.charAt(indexOfInput);
 
-            tokenisedInputStream += token.toXML();
+            String currentChar = inputStream.substring(indexOfInput, indexOfInput + 1);
+            States.State nextState = DFA.transition(currentChar);
+            if (nextState.classType == "ERROR") {
+                System.out.println("ERROR");
+                return "ERROR";
+            }
+
+            if (currentChar.equals(" ") && nextState.isAccepting) {
+                token.addToToken(currentChar);
+                token.setType(nextState.classType);
+                tokenisedInputStream += token.toXML();
+                token.clearToken();
+            } else {
+                token.addToToken(currentChar);
+                indexOfInput++;
+            }
+
         }
 
+        tokenisedInputStream += token.toXML();
         tokenisedInputStream += "</TOKENSTREAM>\n";
         return tokenisedInputStream;
     }
@@ -39,9 +56,12 @@ public class Lexer {
             contents = "";
             classType = "";
         }
+
+        public void addToToken(String add) {
+            this.contents += add;
+        }
     
-        public void setToken(String contents, String classType) {
-            this.contents = contents;
+        public void setType(String classType) {
             this.classType = classType;
         }
     
