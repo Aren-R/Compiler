@@ -17,31 +17,43 @@ public class Lexer {
         String tokenisedInputStream = "<TOKENSTREAM>\n";
         Integer indexOfInput = 0;
         Token token = new Token();
+        States.State curState = DFA.currentState;
 
         //Continuously read the input stream
         while (indexOfInput < inputStream.length() ) {
 
             String currentChar = inputStream.substring(indexOfInput, indexOfInput + 1);
-            States.State nextState = DFA.transition(currentChar);
-            if (nextState.classType == "ERROR") {
-                System.out.println("ERROR");
-                return "ERROR";
+            curState = DFA.transition(currentChar);
+            if (curState.classType.equals("Error: Transition not found")) {
+                return "Error: Transition not found";
             }
 
-            if (currentChar.equals(" ") && nextState.isAccepting) {
-                token.addToToken(currentChar);
-                token.setType(nextState.classType);
-                tokenisedInputStream += token.toXML();
-                token.clearToken();
+            if (currentChar.equals(" ")) {
+                if (curState.isAccepting) {
+                    token.setType(curState.classType);
+                    tokenisedInputStream += token.toXML();
+                    token.clearToken();
+                } else {
+                    return "Error: Invalid token";
+                }
             } else {
                 token.addToToken(currentChar);
-                indexOfInput++;
             }
 
+            
+            indexOfInput++;
+
+            // System.out.println(tokenisedInputStream);
         }
 
-        tokenisedInputStream += token.toXML();
-        tokenisedInputStream += "</TOKENSTREAM>\n";
+        if (curState.isAccepting) {
+            token.setType(curState.classType);
+            tokenisedInputStream += token.toXML();
+            tokenisedInputStream += "</TOKENSTREAM>\n";
+        } else {
+            return "Error";
+        }
+
         return tokenisedInputStream;
     }
 

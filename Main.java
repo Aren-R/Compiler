@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         //CODE TO LEX
-        String inputStream = "main";
+        String inputStream = "100.2 main";
         //===========
         //CREATE LEXER
         Lexer lexer = new Lexer();

@@ -11,22 +11,17 @@ public class States {
     }
 
     public State transition(String c) {
-        if (c == " " && currentState.isAccepting) { //space found, is accepting, create token and continue
+
+        if (!c.equals(" ")) {
+            State nextState = currentState.getNextState(c);
+            currentState = nextState;
+            return nextState;
+        } else {
             State oldState = currentState;
             resetDFA();
             return oldState;
-        } else {
-            if (c == " " && !currentState.isAccepting) {
-                State errorState = new State();
-                errorState.classType = "ERROR";
-                return errorState;
-            }
         }
 
-        //no space
-        State nextState = currentState.getNextState(c);
-        currentState = nextState;
-        return nextState;
     }
 
 
@@ -303,13 +298,15 @@ public class States {
         }
 
         public State getNextState(String c) {
-            if (transitions.containsKey(c)) {
-                return transitions.get(c);
-            } else {
-                State errorState = new State();
-                errorState.classType = "ERROR";
-                return errorState;
+            for (String key : transitions.keySet()) {
+                if (key.contains(c)) {
+                    return transitions.get(key);
+                }
             }
+            // If no matching transition is found
+            State errorState = new State();
+            errorState.classType = "Error: Transition not found";
+            return errorState;
         }
 
         public boolean isAccepting() {
