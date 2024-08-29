@@ -60,7 +60,7 @@ public class Lexer {
     //================================================================================================
     //THIS IS THE TOKEN CLASS WHICH RETURNS XML'ified TOKENS
     public class Token {
-        public static int ID = 0;
+        public static int ID = 1;
         public String contents;
         public String classType;
     

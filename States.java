@@ -232,7 +232,7 @@ public class States {
         //CLASS T==================================================================
         states[0].transitions.put("\"", states[93]); //"
 
-        states[93].transitions.put("abcdefghijklmnopqrstuvwxyz", states[94]); //"[A-Z]
+        states[93].transitions.put("ABCDEFGHIJKLMNOPQRSTUVWXYZ", states[94]); //"[A-Z]
 
         states[94].transitions.put("\"", states[107]);//"[A-Z]"
         states[94].transitions.put("abcdefghijklmnopqrstuvwxyz", states[95]); //"[A-Z][a-z]
@@ -276,7 +276,8 @@ public class States {
 
         states[0].transitions.put("-", states[105]); //-
         states[105].transitions.put("123456789", states[101]); //-[1-9]
-        states[105].transitions.put("0", states[104]); //-[0]
+        states[105].transitions.put("0", states[106]); //-[0]
+        states[106].transitions.put(".", states[102]); //-[0].
 
         states[102].transitions.put("0", states[102]); //.0
         states[102].transitions.put("123456789", states[103]); //.[0-9]*[1-9]
