@@ -34,6 +34,8 @@ public class Lexer {
                     tokenisedInputStream += token.toXML();
                     token.clearToken();
                 } else {
+                    // System.out.println(token.contents);
+                    // System.out.println(currentChar);
                     return "Error: Invalid token";
                 }
             } else {
@@ -50,6 +52,7 @@ public class Lexer {
             token.setType(curState.classType);
             tokenisedInputStream += token.toXML();
             tokenisedInputStream += "</TOKENSTREAM>\n";
+            System.out.println(token.contents);
         } else {
             return "Error";
         }

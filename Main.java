@@ -1,7 +1,31 @@
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Main {
     public static void main(String[] args) {
         //CODE TO LEX
-        String inputStream = "main \n ( ) ";
+        String inputStream = "main " +
+                "num V_x , text V_msg , num V_y , " +
+                "begin " +
+                "V_x = add ( 5 , 3 ) ; " +
+                "V_msg = \"Hello\" ; " +
+                "return V_msg ; " +
+                "if eq ( V_x , 8 ) then " +
+                "V_y = mul ( V_x , 2 ) ; " +
+                "else " +
+                "halt ; " +
+                "end " +
+                "num F_compute ( V_a , V_b , V_c ) " +
+                "{ " +
+                "num V_temp1 , text V_temp2 , num V_temp3 , " +
+                "begin " +
+                "V_temp1 = add ( V_a , V_b ) ; " +
+                "if grt ( V_temp1 , V_c ) then " +
+                "print V_temp1 ; " +
+                "else " +
+                "print V_c ; " +
+                "} " +
+                "end";
         //===========
         //CREATE LEXER
         Lexer lexer = new Lexer();
@@ -11,5 +35,13 @@ public class Main {
         String resultOfLexer = lexer.runLexer();
         System.out.println(resultOfLexer);
         
+        // Save the result to an XML file
+        try (FileWriter fileWriter = new FileWriter("result.xml")) {
+
+            fileWriter.write(resultOfLexer);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
