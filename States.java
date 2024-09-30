@@ -11,18 +11,19 @@ public class States {
     }
 
     public State transition(String c) {
-
-        if (!c.equals(" ")) {
+        // Check for any whitespace character (space, tab, newline, carriage return)
+        if (!(c.equals(" ") || c.equals("\t") || c.equals("\n") || c.equals("\r"))) {
             State nextState = currentState.getNextState(c);
             currentState = nextState;
             return nextState;
         } else {
+            // For any whitespace, reset the DFA but return the old state
             State oldState = currentState;
             resetDFA();
             return oldState;
         }
-
     }
+    
 
 
     //Create all DFA states here

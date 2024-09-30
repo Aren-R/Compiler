@@ -1,10 +1,12 @@
 public class Lexer {
     public String inputStream; // The code that has to be lexed
     public States DFA; 
+    private int lineNumber; // Counter for tracking the line number
 
     public Lexer() {
         this.inputStream = "";
         this.DFA = new States();
+        this.lineNumber = 1; // Start from line 1
     }
 
     // Set the code that has to be lexed
@@ -19,43 +21,56 @@ public class Lexer {
         Token token = new Token();
         States.State curState = DFA.currentState;
 
-        //Continuously read the input stream
-        while (indexOfInput < inputStream.length() ) {
+        // Continuously read the input stream
+        while (indexOfInput < inputStream.length()) {
 
             String currentChar = inputStream.substring(indexOfInput, indexOfInput + 1);
-            curState = DFA.transition(currentChar);
-            if (curState.classType.equals("Error: Transition not found")) {
-                return "Error: Transition not found";
+            System.out.println("Processing character: " + currentChar);
+
+            // Track line numbers (newline character increases the line number)
+            if (currentChar.equals("\n")) {
+                lineNumber++;
             }
 
-            if (currentChar.equals(" ")) {
+            // Skip leading whitespace characters (only if token is empty)
+            if ((currentChar.equals("\r") || currentChar.equals("\t") || currentChar.equals("\n") || currentChar.equals(" ")) && token.contents.equals("")) {
+                indexOfInput++;
+                continue;
+            }
+
+            curState = DFA.transition(currentChar);
+            System.out.println("Current state: " + curState.classType);
+
+            if (curState.classType.equals("Error: Transition not found")) {
+                return "Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'";
+            }
+
+            if (currentChar.equals(" ") || currentChar.equals("\t") || currentChar.equals("\n") || currentChar.equals("\r")) {
                 if (curState.isAccepting) {
                     token.setType(curState.classType);
                     tokenisedInputStream += token.toXML();
                     token.clearToken();
                 } else {
-                    // System.out.println(token.contents);
-                    // System.out.println(currentChar);
-                    return "Error: Invalid token";
+                    return "Error at line " + lineNumber + ": Invalid token '" + token.contents + "'";
                 }
             } else {
                 token.addToToken(currentChar);
             }
 
-            
             indexOfInput++;
-
-            // System.out.println(tokenisedInputStream);
         }
 
-        if (curState.isAccepting) {
-            token.setType(curState.classType);
-            tokenisedInputStream += token.toXML();
-            tokenisedInputStream += "</TOKENSTREAM>\n";
-            System.out.println(token.contents);
-        } else {
-            return "Error";
+        // Check if there's an incomplete token at the end of input
+        if (!token.contents.isEmpty()) {
+            if (curState.isAccepting) {
+                token.setType(curState.classType);
+                tokenisedInputStream += token.toXML();
+            } else {
+                return "Error at line " + lineNumber + ": Incomplete or invalid token '" + token.contents + "'";
+            }
         }
+
+        tokenisedInputStream += "</TOKENSTREAM>\n";
 
         return tokenisedInputStream;
     }
@@ -66,7 +81,7 @@ public class Lexer {
         public static int ID = 1;
         public String contents;
         public String classType;
-    
+
         public Token() {
             contents = "";
             classType = "";
@@ -75,11 +90,11 @@ public class Lexer {
         public void addToToken(String add) {
             this.contents += add;
         }
-    
+
         public void setType(String classType) {
             this.classType = classType;
         }
-    
+
         public String toXML() {
             String xml = "<TOK>\n";
             xml += "<ID>" + Token.ID + "</ID>\n";
@@ -88,7 +103,7 @@ public class Lexer {
             xml += "</TOK>\n";
             return xml;
         }
-    
+
         public void clearToken() {
             Token.ID += 1;
             this.contents = "";

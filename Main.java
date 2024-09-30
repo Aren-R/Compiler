@@ -1,45 +1,37 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        //CODE TO LEX
-        String inputStream = "main " +
-                "num V_x , text V_msg , num V_y , " +
-                "begin " +
-                "V_x = add ( 5 , 3 ) ; " +
-                "V_msg = \"Hello\" ; " +
-                "return V_msg ; " +
-                "if eq ( V_x , 8 ) then " +
-                "V_y = mul ( V_x , 2 ) ; " +
-                "else " +
-                "halt ; " +
-                "end " +
-                "num F_compute ( V_a , V_b , V_c ) " +
-                "{ " +
-                "num V_temp1 , text V_temp2 , num V_temp3 , " +
-                "begin " +
-                "V_temp1 = add ( V_a , V_b ) ; " +
-                "if grt ( V_temp1 , V_c ) then " +
-                "print V_temp1 ; " +
-                "else " +
-                "print V_c ; " +
-                "} " +
-                "end";
-        //===========
+        // File path for the input file
+        String inputFilePath = "input.txt";  // Update this with your file path
+        StringBuilder inputStream = new StringBuilder();
+        
+        // Read the file contents
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                inputStream.append(line).append("\n");  // Add a newline character after each line
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        
+        //===========  
         //CREATE LEXER
         Lexer lexer = new Lexer();
-        lexer.setInputStream(inputStream);  //set the code that has to be lexed
-        //===========
+        lexer.setInputStream(inputStream.toString());  // Set the file content as input to the lexer
+        //===========  
         //RUN THE LEXER
         String resultOfLexer = lexer.runLexer();
         System.out.println(resultOfLexer);
         
         // Save the result to an XML file
         try (FileWriter fileWriter = new FileWriter("result.xml")) {
-
             fileWriter.write(resultOfLexer);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
