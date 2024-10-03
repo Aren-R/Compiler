@@ -1,10 +1,28 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Lexer {
     public String inputStream; // The code that has to be lexed
     public States DFA; 
     private int lineNumber; // Counter for tracking the line number
 
     public Lexer() {
-        this.inputStream = "";
+        String inputFilePath = "resources/input.txt";  // Update this with your file path
+        StringBuilder inputStream = new StringBuilder();
+        
+        // Read the file contents
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                inputStream.append(line).append("\n");  // Add a newline character after each line
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        this.inputStream = inputStream.toString();
         this.DFA = new States();
         this.lineNumber = 1; // Start from line 1
     }
@@ -71,6 +89,13 @@ public class Lexer {
         }
 
         tokenisedInputStream += "</TOKENSTREAM>\n";
+
+        // Save to XML
+        try (FileWriter fileWriter = new FileWriter("Tokens.xml")) {
+            fileWriter.write(tokenisedInputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return tokenisedInputStream;
     }
