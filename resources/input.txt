@@ -7,7 +7,7 @@ return V_msg ;
 if eq ( V_x , 8 ) then
 V_y = mul ( V_x , 2 ) ;
 else
-halt ;
+    halt ;
 end
 num F_compute ( V_a , V_b , V_c ) {
     num V_temp1 , text V_temp2 , num V_temp3 ,

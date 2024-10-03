@@ -6,7 +6,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         // File path for the input file
-        String inputFilePath = "input.txt";  // Update this with your file path
+        String inputFilePath = "resources/input.txt";  // Update this with your file path
         StringBuilder inputStream = new StringBuilder();
         
         // Read the file contents
@@ -20,20 +20,24 @@ public class Main {
             return;
         }
         
-        //===========  
-        //CREATE LEXER
+        //LEXING=============================================================================================
+
         Lexer lexer = new Lexer();
         lexer.setInputStream(inputStream.toString());  // Set the file content as input to the lexer
-        //===========  
-        //RUN THE LEXER
         String resultOfLexer = lexer.runLexer();
         System.out.println(resultOfLexer);
         
-        // Save the result to an XML file
-        try (FileWriter fileWriter = new FileWriter("result.xml")) {
+        // Save to XML
+        try (FileWriter fileWriter = new FileWriter("Tokens.xml")) {
             fileWriter.write(resultOfLexer);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //LEXING=============================================================================================
+
+        //PARSING=============================================================================================
+
+        //PARSING=============================================================================================
     }
 }
