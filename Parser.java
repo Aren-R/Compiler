@@ -95,8 +95,11 @@ public class Parser {
             if (tokenNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element tokenElement = (Element) tokenNode;
                 String tokenClass = tokenElement.getElementsByTagName("CLASS").item(0).getTextContent();
+                System.out.println("Token class: " + tokenClass);
                 String tokenWord = tokenElement.getElementsByTagName("WORD").item(0).getTextContent();
+                System.out.println("Token word: " + tokenWord);
     
+                System.out.println("stateStack: " + stateStack);
                 // Check if the tokenWord needs to be reduced to its first letter
                 if (tokenClass.equals("V") || tokenClass.equals("N") || tokenClass.equals("T") || tokenClass.equals("F")) {
                     tokenWord = tokenWord.substring(0, 1);  // Use only the first letter for these tokens
@@ -118,6 +121,7 @@ public class Parser {
                 if (action.startsWith("s")) {
                     // Shift action
                     int nextState = Integer.parseInt(action.substring(1));
+                    System.out.println("Shifting to state " + nextState);
                     stateStack.push(nextState);
                     symbolStack.push(tokenWord);
     
@@ -149,235 +153,235 @@ public class Parser {
         List<String> childrenSymbols = new ArrayList<>();
     
         switch (ruleNumber) {
-            case 1: // PROG -> main GLOBVARS ALGO FUNCTIONS
+            case 0: // PROG -> main GLOBVARS ALGO FUNCTIONS
                 symbolsToPop = 4; // GLOBVARS, ALGO, FUNCTIONS, main
                 nonTerminal = "PROG";
                 break;
-            case 2: // GLOBVARS -> ''
+            case 1: // GLOBVARS -> ''
                 symbolsToPop = 0; // Epsilon production
                 nonTerminal = "GLOBVARS";
                 break;
-            case 3: // GLOBVARS -> VTYP VNAME , GLOBVARS
+            case 2: // GLOBVARS -> VTYP VNAME , GLOBVARS
                 symbolsToPop = 4; // VTYP, VNAME, ',', GLOBVARS
                 nonTerminal = "GLOBVARS";
                 break;
-            case 4: // VTYP -> num
+            case 3: // VTYP -> num
                 symbolsToPop = 1; // num
                 nonTerminal = "VTYP";
                 break;
-            case 5: // VTYP -> text
+            case 4: // VTYP -> text
                 symbolsToPop = 1; // text
                 nonTerminal = "VTYP";
                 break;
-            case 6: // VNAME -> V
+            case 5: // VNAME -> V
                 symbolsToPop = 1; // V
                 nonTerminal = "VNAME";
                 break;
-            case 7: // ALGO -> begin INSTRUC end
+            case 6: // ALGO -> begin INSTRUC end
                 symbolsToPop = 3; // INSTRUC, begin, end
                 nonTerminal = "ALGO";
                 break;
-            case 8: // INSTRUC -> ''
+            case 7: // INSTRUC -> ''
                 symbolsToPop = 0; // Epsilon production
                 nonTerminal = "INSTRUC";
                 break;
-            case 9: // INSTRUC -> COMMAND ; INSTRUC
+            case 8: // INSTRUC -> COMMAND ; INSTRUC
                 symbolsToPop = 3; // COMMAND, ;, INSTRUC
                 nonTerminal = "INSTRUC";
                 break;
-            case 10: // COMMAND -> skip
+            case 9: // COMMAND -> skip
                 symbolsToPop = 1; // skip
                 nonTerminal = "COMMAND";
                 break;
-            case 11: // COMMAND -> halt
+            case 10: // COMMAND -> halt
                 symbolsToPop = 1; // halt
                 nonTerminal = "COMMAND";
                 break;
-            case 12: // COMMAND -> print ATOMIC
+            case 11: // COMMAND -> print ATOMIC
                 symbolsToPop = 2; // print, ATOMIC
                 nonTerminal = "COMMAND";
                 break;
-            case 13: // COMMAND -> ASSIGN
+            case 12: // COMMAND -> ASSIGN
                 symbolsToPop = 1; // ASSIGN
                 nonTerminal = "COMMAND";
                 break;
-            case 14: // COMMAND -> CALL
+            case 13: // COMMAND -> CALL
                 symbolsToPop = 1; // CALL
                 nonTerminal = "COMMAND";
                 break;
-            case 15: // COMMAND -> BRANCH
+            case 14: // COMMAND -> BRANCH
                 symbolsToPop = 1; // BRANCH
                 nonTerminal = "COMMAND";
                 break;
-            case 16: // ATOMIC -> VNAME
+            case 15: // ATOMIC -> VNAME
                 symbolsToPop = 1; // VNAME
                 nonTerminal = "ATOMIC";
                 break;
-            case 17: // ATOMIC -> CONST
+            case 16: // ATOMIC -> CONST
                 symbolsToPop = 1; // CONST
                 nonTerminal = "ATOMIC";
                 break;
-            case 18: // CONST -> N
+            case 17: // CONST -> N
                 symbolsToPop = 1; // N
                 nonTerminal = "CONST";
                 break;
-            case 19: // CONST -> T
+            case 18: // CONST -> T
                 symbolsToPop = 1; // T
                 nonTerminal = "CONST";
                 break;
-            case 20: // ASSIGN -> VNAME < input
+            case 19: // ASSIGN -> VNAME < input
                 symbolsToPop = 3; // VNAME, <, input
                 nonTerminal = "ASSIGN";
                 break;
-            case 21: // ASSIGN -> VNAME = TERM
+            case 20: // ASSIGN -> VNAME = TERM
                 symbolsToPop = 3; // VNAME, =, TERM
                 nonTerminal = "ASSIGN";
                 break;
-            case 22: // CALL -> FNAME ( ATOMIC , ATOMIC , ATOMIC )
-                symbolsToPop = 7; // FNAME, (, ATOMIC, ,, ATOMIC, ,, ATOMIC, )
+            case 21: // CALL -> FNAME ( ATOMIC , ATOMIC , ATOMIC )
+                symbolsToPop = 8; // FNAME, (, ATOMIC, ,, ATOMIC, ,, ATOMIC, )
                 nonTerminal = "CALL";
                 break;
-            case 23: // BRANCH -> if COND then ALGO else ALGO
+            case 22: // BRANCH -> if COND then ALGO else ALGO
                 symbolsToPop = 6; // if, COND, then, ALGO, else, ALGO
                 nonTerminal = "BRANCH";
                 break;
-            case 24: // TERM -> ATOMIC
+            case 23: // TERM -> ATOMIC
                 symbolsToPop = 1; // ATOMIC
                 nonTerminal = "TERM";
                 break;
-            case 25: // TERM -> CALL
+            case 24: // TERM -> CALL
                 symbolsToPop = 1; // CALL
                 nonTerminal = "TERM";
                 break;
-            case 26: // TERM -> OP
+            case 25: // TERM -> OP
                 symbolsToPop = 1; // OP
                 nonTerminal = "TERM";
                 break;
-            case 27: // OP -> UNOP ( ARG )
+            case 26: // OP -> UNOP ( ARG )
                 symbolsToPop = 4; // UNOP, (, ARG, )
                 nonTerminal = "OP";
                 break;
-            case 28: // OP -> BINOP ( ARG , ARG )
+            case 27: // OP -> BINOP ( ARG , ARG )
                 symbolsToPop = 6; // BINOP, (, ARG, ,, ARG, )
                 nonTerminal = "OP";
                 break;
-            case 29: // ARG -> ATOMIC
+            case 28: // ARG -> ATOMIC
                 symbolsToPop = 1; // ATOMIC
                 nonTerminal = "ARG";
                 break;
-            case 30: // ARG -> OP
+            case 29: // ARG -> OP
                 symbolsToPop = 1; // OP
                 nonTerminal = "ARG";
                 break;
-            case 31: // COND -> SIMPLE
+            case 30: // COND -> SIMPLE
                 symbolsToPop = 1; // SIMPLE
                 nonTerminal = "COND";
                 break;
-            case 32: // COND -> COMPOSIT
+            case 31: // COND -> COMPOSIT
                 symbolsToPop = 1; // COMPOSIT
                 nonTerminal = "COND";
                 break;
-            case 33: // SIMPLE -> BINOP ( ATOMIC , ATOMIC )
+            case 32: // SIMPLE -> BINOP ( ATOMIC , ATOMIC )
                 symbolsToPop = 6; // BINOP, (, ATOMIC, ,, ATOMIC, )
                 nonTerminal = "SIMPLE";
                 break;
-            case 34: // COMPOSIT -> BINOP ( SIMPLE , SIMPLE )
+            case 33: // COMPOSIT -> BINOP ( SIMPLE , SIMPLE )
                 symbolsToPop = 6; // BINOP, (, SIMPLE, ,, SIMPLE, )
                 nonTerminal = "COMPOSIT";
                 break;
-            case 35: // COMPOSIT -> UNOP ( SIMPLE )
+            case 34: // COMPOSIT -> UNOP ( SIMPLE )
                 symbolsToPop = 4; // UNOP, (, SIMPLE, )
                 nonTerminal = "COMPOSIT";
                 break;
-            case 36: // UNOP -> not
+            case 35: // UNOP -> not
                 symbolsToPop = 1; // not
                 nonTerminal = "UNOP";
                 break;
-            case 37: // UNOP -> sqrt
+            case 36: // UNOP -> sqrt
                 symbolsToPop = 1; // sqrt
                 nonTerminal = "UNOP";
                 break;
-            case 38: // BINOP -> or
+            case 37: // BINOP -> or
                 symbolsToPop = 1; // or
                 nonTerminal = "BINOP";
                 break;
-            case 39: // BINOP -> and
+            case 38: // BINOP -> and
                 symbolsToPop = 1; // and
                 nonTerminal = "BINOP";
                 break;
-            case 40: // BINOP -> eq
+            case 39: // BINOP -> eq
                 symbolsToPop = 1; // eq
                 nonTerminal = "BINOP";
                 break;
-            case 41: // BINOP -> grt
+            case 40: // BINOP -> grt
                 symbolsToPop = 1; // grt
                 nonTerminal = "BINOP";
                 break;
-            case 42: // BINOP -> add
+            case 41: // BINOP -> add
                 symbolsToPop = 1; // add
                 nonTerminal = "BINOP";
                 break;
-            case 43: // BINOP -> sub
+            case 42: // BINOP -> sub
                 symbolsToPop = 1; // sub
                 nonTerminal = "BINOP";
                 break;
-            case 44: // BINOP -> mul
+            case 43: // BINOP -> mul
                 symbolsToPop = 1; // mul
                 nonTerminal = "BINOP";
                 break;
-            case 45: // BINOP -> div
+            case 44: // BINOP -> div
                 symbolsToPop = 1; // div
                 nonTerminal = "BINOP";
                 break;
-            case 46: // FNAME -> F
+            case 45: // FNAME -> F
                 symbolsToPop = 1; // F
                 nonTerminal = "FNAME";
                 break;
-            case 47: // FUNCTIONS -> ''
+            case 46: // FUNCTIONS -> ''
                 symbolsToPop = 0; // Epsilon production
                 nonTerminal = "FUNCTIONS";
                 break;
-            case 48: // FUNCTIONS -> DECL FUNCTIONS
+            case 47: // FUNCTIONS -> DECL FUNCTIONS
                 symbolsToPop = 2; // DECL, FUNCTIONS
                 nonTerminal = "FUNCTIONS";
                 break;
-            case 49: // DECL -> HEADER BODY
+            case 48: // DECL -> HEADER BODY
                 symbolsToPop = 2; // HEADER, BODY
                 nonTerminal = "DECL";
                 break;
-            case 50: // HEADER -> FTYP FNAME ( VNAME , VNAME , VNAME )
+            case 49: // HEADER -> FTYP FNAME ( VNAME , VNAME , VNAME )
                 symbolsToPop = 9; // FTYP, FNAME, (, VNAME, ,, VNAME, ,, VNAME, )
                 nonTerminal = "HEADER";
                 break;
-            case 51: // FTYP -> num
+            case 50: // FTYP -> num
                 symbolsToPop = 1; // num
                 nonTerminal = "FTYP";
                 break;
-            case 52: // FTYP -> void
+            case 51: // FTYP -> void
                 symbolsToPop = 1; // void
                 nonTerminal = "FTYP";
                 break;
-            case 53: // BODY -> PROLOG LOCVARS ALGO EPILOG SUBFUNCS end
+            case 52: // BODY -> PROLOG LOCVARS ALGO EPILOG SUBFUNCS end
                 symbolsToPop = 6; // PROLOG, LOCVARS, ALGO, EPILOG, SUBFUNCS, end
                 nonTerminal = "BODY";
                 break;
-            case 54: // PROLOG -> {
+            case 53: // PROLOG -> {
                 symbolsToPop = 1; // {
                 nonTerminal = "PROLOG";
                 break;
-            case 55: // EPILOG -> }
+            case 54: // EPILOG -> }
                 symbolsToPop = 1; // }
                 nonTerminal = "EPILOG";
                 break;
-            case 56: // LOCVARS -> VTYP VNAME , VTYP VNAME , VTYP VNAME ,
+            case 55: // LOCVARS -> VTYP VNAME , VTYP VNAME , VTYP VNAME ,
                 symbolsToPop = 9; // VTYP, VNAME, ,, VTYP, VNAME, ,, VTYP, VNAME, ,
                 nonTerminal = "LOCVARS";
                 break;
-            case 57: // SUBFUNCS -> FUNCTIONS
+            case 56: // SUBFUNCS -> FUNCTIONS
                 symbolsToPop = 1; // FUNCTIONS
                 nonTerminal = "SUBFUNCS";
                 break;
-            case 58: // COMMAND -> return ATOMIC
+            case 57: // COMMAND -> return ATOMIC
                 symbolsToPop = 2; // return, ATOMIC
                 nonTerminal = "COMMAND";
                 break;
@@ -404,9 +408,12 @@ public class Parser {
         // Push the non-terminal back onto the symbol stack
         symbolStack.push(nonTerminal);
 
-        // Move to the next state based on the non-terminal
-        int currentState = stateStack.peek();
-        Map<String, Integer> nonTerminalRow = nonTerminalTable.get(currentState);
+        // **Get the current state after popping the states**
+        int currentState = stateStack.peek();  // Get the new top state from the stack after popping
+        
+        // **Lookup the next state using the non-terminal**
+        Map<String, Integer> nonTerminalRow = nonTerminalTable.get(currentState);  // Get the row for the current state in the non-terminal table
+
         if (nonTerminalRow != null) {
             Integer nextState = nonTerminalRow.get(nonTerminal);
             if (nextState != null) {
