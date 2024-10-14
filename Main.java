@@ -1,11 +1,13 @@
 public class Main {
     public static void main(String[] args) {
-        //LEXING
+        // LEXING
         Lexer lexer = new Lexer();
         String resultOfLexer = lexer.runLexer();
-        System.out.println(resultOfLexer);
+        // System.out.println(resultOfLexer);
 
-        //PARSING
-
+        // PARSING
+        Parser parser = new Parser();
+        parser.setTokenStream(resultOfLexer); // Set the token stream for parsing
+        parser.parse(); // Start parsing
     }
 }

@@ -43,7 +43,7 @@ public class Lexer {
         while (indexOfInput < inputStream.length()) {
 
             String currentChar = inputStream.substring(indexOfInput, indexOfInput + 1);
-            System.out.println("Processing character: " + currentChar);
+            // System.out.println("Processing character: " + currentChar);
 
             // Track line numbers (newline character increases the line number)
             if (currentChar.equals("\n")) {
@@ -57,7 +57,7 @@ public class Lexer {
             }
 
             curState = DFA.transition(currentChar);
-            System.out.println("Current state: " + curState.classType);
+            // System.out.println("Current state: " + curState.classType);
 
             if (curState.classType.equals("Error: Transition not found")) {
                 return "Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'";
