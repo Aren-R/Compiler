@@ -38,7 +38,7 @@ public class Parser {
 
         int i = 0;
         while (true) {
-            System.out.println("Stack: " + stack);
+            // System.out.println("Stack: " + stack);
 
             Node token = tokens.item(i);
 
@@ -58,7 +58,7 @@ public class Parser {
 
             String action;
             if (isVar) {
-                System.out.println("TempWord: " + tempWord);
+                // System.out.println("TempWord: " + tempWord);
                 action = terminalTable.get(state).get(tempWord);
             } else {
                 action = terminalTable.get(state).get(tokenWord);
@@ -78,7 +78,10 @@ public class Parser {
             if (action.startsWith("s")) {
                 int nextState = Integer.parseInt(action.substring(1));
                 stack.push(new TokenNode(nextState, tokenClass, tokenWord));
-                System.out.println("Shift "+ nextState + " and " + tokenWord);
+                // System.out.println("Shift "+ nextState + " and " + tokenWord);
+
+                // Create a leaf node for the terminal (token)
+                addLeafNode(token);
                 i += 1;
             }
 
@@ -90,14 +93,14 @@ public class Parser {
 
         }
     }
-    
 
     private void applyReduction(int ruleNumber) {
-        System.out.println("Applying reduction rule: " + ruleNumber);
+        // System.out.println("Applying reduction rule: " + ruleNumber);
 
         int symbolsToPop;
         String nonTerminal;
         List<String> childrenSymbols = new ArrayList<>();
+        List<String> poppedNodeIds = new ArrayList<>();
     
         switch (ruleNumber) {
             case 0: // PROG -> main GLOBVARS ALGO FUNCTIONS
@@ -339,12 +342,25 @@ public class Parser {
 
         for (int i = 0; i < symbolsToPop; i++) {
             TokenNode poppedNode = stack.pop();
+            poppedNodeIds.add(String.valueOf(uniqueIdCounter - symbolsToPop + i));
         }
 
-        //GOTO
+        addInnerNode(nonTerminal, poppedNodeIds);
+
         int newState = nonTerminalTable.get(stack.peek().state).get(nonTerminal);
         stack.push(new TokenNode(newState, nonTerminal, nonTerminal));
-        System.out.println("Goto "+ newState + " and " + nonTerminal);
+
+        if (nonTerminal.equals("PROG")) {
+            // Locate the <CHILDREN> element under the root
+            Element rootChildren = (Element) rootElement.getElementsByTagName("CHILDREN").item(0);
+        
+            // Add each popped node's UNID to the <CHILDREN> section
+            for (String childId : poppedNodeIds) {
+                Element idElement = syntaxTree.createElement("ID");
+                idElement.appendChild(syntaxTree.createTextNode(childId));
+                rootChildren.appendChild(idElement);
+            }
+        }
     }
     
     public void setTokenStream(String tokenStreamXML) {
@@ -362,29 +378,25 @@ public class Parser {
         try {
             // Create a leaf node
             Element leafNode = syntaxTree.createElement("LEAF");
-
-            // Assign a unique ID
+    
+            // Assign a unique ID to the leaf
             Element unidElement = syntaxTree.createElement("UNID");
             unidElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter++)));
             leafNode.appendChild(unidElement);
-
-            // Assign the parent
-            Element parentElement = syntaxTree.createElement("PARENT");
-            parentElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter - 2)));
-            leafNode.appendChild(parentElement);
-
+    
             // Add the terminal (token) as the content of the leaf node
             Element terminalElement = syntaxTree.createElement("TERMINAL");
             Node importedNode = syntaxTree.importNode(tokenNode, true);
             terminalElement.appendChild(importedNode);
             leafNode.appendChild(terminalElement);
-
+    
             leafNodesElement.appendChild(leafNode);
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
 
     private void addInnerNode(String nonTerminal, List<String> children) {
         Element innerNode = syntaxTree.createElement("IN");
@@ -412,7 +424,7 @@ public class Parser {
         innerNodesElement.appendChild(innerNode);
     }
 
-    private void printSyntaxTree() {
+    public void printSyntaxTree() {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
@@ -448,44 +460,47 @@ public class Parser {
     
     private void initializeSyntaxTree() {
         try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-            // Create new document for the syntax tree
-            syntaxTree = docBuilder.newDocument();
-
-            // Create the root element of the syntax tree
-            rootElement = syntaxTree.createElement("SYNTREE");
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            syntaxTree = builder.newDocument();
+    
+            // Create the root element <SYNTAXTREE>
+            rootElement = syntaxTree.createElement("SYNTAXTREE");
             syntaxTree.appendChild(rootElement);
-
-            // Create sub-elements for ROOT, INNERNODES, and LEAFNODES
-            Element rootNode = syntaxTree.createElement("ROOT");
-            rootElement.appendChild(rootNode);
-
-            Element unidElement = syntaxTree.createElement("UNID");
-            unidElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter++)));
-            rootNode.appendChild(unidElement);
-
-            Element startSymElement = syntaxTree.createElement("SYMB");
-            startSymElement.appendChild(syntaxTree.createTextNode("PROG"));  // Starting symbol of the grammar
-            rootNode.appendChild(startSymElement);
-
-            // Create children elements for the root node
-            Element childrenElement = syntaxTree.createElement("CHILDREN");
-            rootNode.appendChild(childrenElement);
-
-            // Create placeholders for inner nodes and leaf nodes
+    
+            // Create the inner nodes container element <INNERNODES>
             innerNodesElement = syntaxTree.createElement("INNERNODES");
             rootElement.appendChild(innerNodesElement);
-
+    
+            // Create the leaf nodes container element <LEAFNODES>
             leafNodesElement = syntaxTree.createElement("LEAFNODES");
             rootElement.appendChild(leafNodesElement);
-
+    
+            // Add the initial root node to the syntax tree
+            Element rootNode = syntaxTree.createElement("ROOT");
+    
+            // Add root UNID
+            Element rootIdElement = syntaxTree.createElement("UNID");
+            rootIdElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter++)));
+            rootNode.appendChild(rootIdElement);
+    
+            // Add root symbol (start symbol)
+            Element rootSymbolElement = syntaxTree.createElement("SYMB");
+            rootSymbolElement.appendChild(syntaxTree.createTextNode("PROG")); // Assuming "PROG" is the start symbol
+            rootNode.appendChild(rootSymbolElement);
+    
+            // Add the <CHILDREN> element under the root
+            Element rootChildren = syntaxTree.createElement("CHILDREN");
+            rootNode.appendChild(rootChildren);
+    
+            // Now, append the root node to the syntax tree at the correct position
+            rootElement.appendChild(rootNode);
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     private void initializeParsingTable() {
         //Populate the TERMINALS and NONTERMINALS
         Map<Integer, Map<String, String>> terminals = new HashMap<>();
