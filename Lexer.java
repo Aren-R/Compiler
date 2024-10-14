@@ -88,6 +88,9 @@ public class Lexer {
             }
         }
 
+        token.setType("$");
+        token.contents = "$";
+        tokenisedInputStream += token.toXML();
         tokenisedInputStream += "</TOKENSTREAM>\n";
 
         // Save to XML

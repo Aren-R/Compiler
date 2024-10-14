@@ -11,8 +11,7 @@ public class Parser {
 
     private Map<Integer, Map<String, String>> terminalTable;
     private Map<Integer, Map<String, Integer>> nonTerminalTable;
-    private Stack<Integer> stateStack;
-    private Stack<String> symbolStack;
+    private Stack<TokenNode> stack;
     private Document tokenStream;
 
     // Variables for syntax tree construction
@@ -25,122 +24,70 @@ public class Parser {
     public Parser() {
         terminalTable = new HashMap<>();
         nonTerminalTable = new HashMap<>();
-        stateStack = new Stack<>();
-        symbolStack = new Stack<>();
+        stack = new Stack<TokenNode>();
         uniqueIdCounter = 1;  // Start IDs at 1
 
         initializeParsingTable();
         initializeSyntaxTree();
     }
 
-    private void initializeSyntaxTree() {
-        try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-            // Create new document for the syntax tree
-            syntaxTree = docBuilder.newDocument();
-
-            // Create the root element of the syntax tree
-            rootElement = syntaxTree.createElement("SYNTREE");
-            syntaxTree.appendChild(rootElement);
-
-            // Create sub-elements for ROOT, INNERNODES, and LEAFNODES
-            Element rootNode = syntaxTree.createElement("ROOT");
-            rootElement.appendChild(rootNode);
-
-            Element unidElement = syntaxTree.createElement("UNID");
-            unidElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter++)));
-            rootNode.appendChild(unidElement);
-
-            Element startSymElement = syntaxTree.createElement("SYMB");
-            startSymElement.appendChild(syntaxTree.createTextNode("PROG"));  // Starting symbol of the grammar
-            rootNode.appendChild(startSymElement);
-
-            // Create children elements for the root node
-            Element childrenElement = syntaxTree.createElement("CHILDREN");
-            rootNode.appendChild(childrenElement);
-
-            // Create placeholders for inner nodes and leaf nodes
-            innerNodesElement = syntaxTree.createElement("INNERNODES");
-            rootElement.appendChild(innerNodesElement);
-
-            leafNodesElement = syntaxTree.createElement("LEAFNODES");
-            rootElement.appendChild(leafNodesElement);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setTokenStream(String tokenStreamXML) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(tokenStreamXML));
-            this.tokenStream = builder.parse(is);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void parse() {
-        stateStack.push(0);
-    
-        NodeList tokenNodes = tokenStream.getElementsByTagName("TOK");
-    
-        for (int i = 0; i < tokenNodes.getLength(); i++) {
-            Node tokenNode = tokenNodes.item(i);
-    
-            if (tokenNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element tokenElement = (Element) tokenNode;
-                String tokenClass = tokenElement.getElementsByTagName("CLASS").item(0).getTextContent();
-                System.out.println("Token class: " + tokenClass);
-                String tokenWord = tokenElement.getElementsByTagName("WORD").item(0).getTextContent();
-                System.out.println("Token word: " + tokenWord);
-    
-                System.out.println("stateStack: " + stateStack);
-                // Check if the tokenWord needs to be reduced to its first letter
-                if (tokenClass.equals("V") || tokenClass.equals("N") || tokenClass.equals("T") || tokenClass.equals("F")) {
-                    tokenWord = tokenWord.substring(0, 1);  // Use only the first letter for these tokens
-                }
-    
-                int currentState = stateStack.peek();
-                Map<String, String> terminalRow = terminalTable.get(currentState);
-                if (terminalRow == null) {
-                    System.out.println("Error: No terminal row for state " + currentState);
-                    return;
-                }
-    
-                String action = terminalRow.get(tokenWord);
-                if (action == null) {
-                    System.out.println("Error: Unexpected token '" + tokenWord + "' in state " + currentState);
-                    return;
-                }
-    
-                if (action.startsWith("s")) {
-                    // Shift action
-                    int nextState = Integer.parseInt(action.substring(1));
-                    System.out.println("Shifting to state " + nextState);
-                    stateStack.push(nextState);
-                    symbolStack.push(tokenWord);
-    
-                    // Add this terminal to the leaf node section of the syntax tree
-                    addLeafNode(tokenNode);
-    
-                } else if (action.startsWith("r")) {
-                    int ruleNumber = Integer.parseInt(action.substring(1));
-                    applyReduction(ruleNumber);
-    
-                } else if (action.equals("accept")) {
-                    System.out.println("Parsing successful!");
-                    return;
-    
-                } else {
-                    System.out.println("Error: Invalid action '" + action + "' for token '" + tokenWord + "'");
-                    return;
-                }
+        stack.push(new TokenNode(0, "na", "PROG"));
+
+        NodeList tokens = tokenStream.getElementsByTagName("TOK");
+
+        int i = 0;
+        while (true) {
+            System.out.println("Stack: " + stack);
+
+            Node token = tokens.item(i);
+
+            Element tokenElement = (Element) token;
+            
+            String tokenWord = tokenElement.getElementsByTagName("WORD").item(0).getTextContent();
+            String tokenClass = tokenElement.getElementsByTagName("CLASS").item(0).getTextContent();
+
+            int state = stack.peek().state;
+
+            boolean isVar = false;
+            String tempWord = "";
+            if (tokenClass.equals("V") || tokenClass.equals("F") || tokenClass.equals("N") || tokenClass.equals("T")) {
+                isVar = true;
+                tempWord = tokenClass;
             }
+
+            String action;
+            if (isVar) {
+                System.out.println("TempWord: " + tempWord);
+                action = terminalTable.get(state).get(tempWord);
+            } else {
+                action = terminalTable.get(state).get(tokenWord);
+            }
+
+            //no defined action
+            if (action == null) {
+                System.out.println("Syntax Error at token: " + tokenWord);
+                break;
+            }
+
+            if (action.equals("acc")) {
+                System.out.println("Accepted");
+                break;
+            }
+
+            if (action.startsWith("s")) {
+                int nextState = Integer.parseInt(action.substring(1));
+                stack.push(new TokenNode(nextState, tokenClass, tokenWord));
+                System.out.println("Shift "+ nextState + " and " + tokenWord);
+                i += 1;
+            }
+
+            if (action.startsWith("r")) {
+                int ruleNumber = Integer.parseInt(action.substring(1));
+                applyReduction(ruleNumber);
+            }
+
+
         }
     }
     
@@ -389,43 +336,27 @@ public class Parser {
                 System.out.println("Error: Invalid rule number " + ruleNumber);
                 return;
         }
-    
-        // Check if there are enough symbols to pop
-        if (symbolStack.size() < symbolsToPop || stateStack.size() < symbolsToPop) {
-            System.out.println("Error: Not enough symbols on the stack for reduction rule " + ruleNumber);
-            return;
-        }
 
-        // Pop the symbols and states for the reduction
         for (int i = 0; i < symbolsToPop; i++) {
-            childrenSymbols.add(symbolStack.pop());
-            stateStack.pop();
+            TokenNode poppedNode = stack.pop();
         }
 
-        // Add a non-terminal inner node to the tree
-        addInnerNode(nonTerminal, childrenSymbols);
-
-        // Push the non-terminal back onto the symbol stack
-        symbolStack.push(nonTerminal);
-
-        // **Get the current state after popping the states**
-        int currentState = stateStack.peek();  // Get the new top state from the stack after popping
-        
-        // **Lookup the next state using the non-terminal**
-        Map<String, Integer> nonTerminalRow = nonTerminalTable.get(currentState);  // Get the row for the current state in the non-terminal table
-
-        if (nonTerminalRow != null) {
-            Integer nextState = nonTerminalRow.get(nonTerminal);
-            if (nextState != null) {
-                stateStack.push(nextState);
-            } else {
-                System.out.println("Error: No transition for non-terminal '" + nonTerminal + "' in state " + currentState);
-            }
-        } else {
-            System.out.println("Error: No non-terminal row for state " + currentState);
-        }
+        //GOTO
+        int newState = nonTerminalTable.get(stack.peek().state).get(nonTerminal);
+        stack.push(new TokenNode(newState, nonTerminal, nonTerminal));
+        System.out.println("Goto "+ newState + " and " + nonTerminal);
     }
     
+    public void setTokenStream(String tokenStreamXML) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(tokenStreamXML));
+            this.tokenStream = builder.parse(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void addLeafNode(Node tokenNode) {
         try {
@@ -498,7 +429,62 @@ public class Parser {
             e.printStackTrace();
         }
     }
+
+    public class TokenNode {
+        int state;
+        String classType;
+        String word;
+
+        public TokenNode(int state, String classType, String word) {
+            this.state = state;
+            this.classType = classType;
+            this.word = word;
+        }
+
+        public String toString() {
+            return "" + state;
+        }
+    }
     
+    private void initializeSyntaxTree() {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+            // Create new document for the syntax tree
+            syntaxTree = docBuilder.newDocument();
+
+            // Create the root element of the syntax tree
+            rootElement = syntaxTree.createElement("SYNTREE");
+            syntaxTree.appendChild(rootElement);
+
+            // Create sub-elements for ROOT, INNERNODES, and LEAFNODES
+            Element rootNode = syntaxTree.createElement("ROOT");
+            rootElement.appendChild(rootNode);
+
+            Element unidElement = syntaxTree.createElement("UNID");
+            unidElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter++)));
+            rootNode.appendChild(unidElement);
+
+            Element startSymElement = syntaxTree.createElement("SYMB");
+            startSymElement.appendChild(syntaxTree.createTextNode("PROG"));  // Starting symbol of the grammar
+            rootNode.appendChild(startSymElement);
+
+            // Create children elements for the root node
+            Element childrenElement = syntaxTree.createElement("CHILDREN");
+            rootNode.appendChild(childrenElement);
+
+            // Create placeholders for inner nodes and leaf nodes
+            innerNodesElement = syntaxTree.createElement("INNERNODES");
+            rootElement.appendChild(innerNodesElement);
+
+            leafNodesElement = syntaxTree.createElement("LEAFNODES");
+            rootElement.appendChild(leafNodesElement);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     private void initializeParsingTable() {
         //Populate the TERMINALS and NONTERMINALS
