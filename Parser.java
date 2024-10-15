@@ -69,11 +69,31 @@ public class Parser {
                 System.out.println("Syntax Error at token: " + tokenWord);
                 break;
             }
-
             if (action.equals("acc")) {
+                List<String> poppedNodeIds = new ArrayList<>();
+                for (int j = 0; j < 4; j++) {
+                    TokenNode poppedNode = stack.pop();
+                    poppedNodeIds.add(String.valueOf(poppedNode.id));
+                }
+                TokenNode poppedNode = stack.pop();
+                
+                // Get the <ROOT> node
+                Element rootNode = (Element) rootElement.getElementsByTagName("ROOT").item(0);
+                
+                // Get the <CHILDREN> element under the <ROOT>
+                Element rootChildren = (Element) rootNode.getElementsByTagName("CHILDREN").item(0);
+                
+                // Add each popped node ID as a child ID
+                for (String childId : poppedNodeIds) {
+                    Element idElement = syntaxTree.createElement("ID");
+                    idElement.appendChild(syntaxTree.createTextNode(childId));
+                    rootChildren.appendChild(idElement);
+                }
+
                 System.out.println("Accepted");
                 break;
             }
+
 
             if (action.startsWith("s")) {
                 int nextState = Integer.parseInt(action.substring(1));
@@ -342,7 +362,7 @@ public class Parser {
 
         for (int i = 0; i < symbolsToPop; i++) {
             TokenNode poppedNode = stack.pop();
-            poppedNodeIds.add(String.valueOf(uniqueIdCounter - symbolsToPop + i));
+            poppedNodeIds.add(String.valueOf(poppedNode.id));
         }
 
         addInnerNode(nonTerminal, poppedNodeIds);
@@ -350,17 +370,6 @@ public class Parser {
         int newState = nonTerminalTable.get(stack.peek().state).get(nonTerminal);
         stack.push(new TokenNode(newState, nonTerminal, nonTerminal));
 
-        if (nonTerminal.equals("PROG")) {
-            // Locate the <CHILDREN> element under the root
-            Element rootChildren = (Element) rootElement.getElementsByTagName("CHILDREN").item(0);
-        
-            // Add each popped node's UNID to the <CHILDREN> section
-            for (String childId : poppedNodeIds) {
-                Element idElement = syntaxTree.createElement("ID");
-                idElement.appendChild(syntaxTree.createTextNode(childId));
-                rootChildren.appendChild(idElement);
-            }
-        }
     }
     
     public void setTokenStream(String tokenStreamXML) {
@@ -424,6 +433,28 @@ public class Parser {
         innerNodesElement.appendChild(innerNode);
     }
 
+    private void addRootNode(String symbol) {
+        Element rootNode = syntaxTree.createElement("ROOT");
+    
+        // Create the UNID element
+        Element unidElement = syntaxTree.createElement("UNID");
+        unidElement.appendChild(syntaxTree.createTextNode(String.valueOf(uniqueIdCounter++)));
+        rootNode.appendChild(unidElement);
+    
+        // Create the SYMB element
+        Element symbElement = syntaxTree.createElement("SYMB");
+        symbElement.appendChild(syntaxTree.createTextNode(symbol));
+        rootNode.appendChild(symbElement);
+    
+        // Create the CHILDREN element (initially empty)
+        Element childrenElement = syntaxTree.createElement("CHILDREN");
+        rootNode.appendChild(childrenElement);
+    
+        // Add the ROOT element to the main tree structure
+        innerNodesElement.appendChild(rootNode);
+    }
+    
+
     public void printSyntaxTree() {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -446,11 +477,13 @@ public class Parser {
         int state;
         String classType;
         String word;
+        Integer id;
 
         public TokenNode(int state, String classType, String word) {
             this.state = state;
             this.classType = classType;
             this.word = word;
+            this.id = uniqueIdCounter++;
         }
 
         public String toString() {
@@ -467,14 +500,6 @@ public class Parser {
             // Create the root element <SYNTAXTREE>
             rootElement = syntaxTree.createElement("SYNTAXTREE");
             syntaxTree.appendChild(rootElement);
-    
-            // Create the inner nodes container element <INNERNODES>
-            innerNodesElement = syntaxTree.createElement("INNERNODES");
-            rootElement.appendChild(innerNodesElement);
-    
-            // Create the leaf nodes container element <LEAFNODES>
-            leafNodesElement = syntaxTree.createElement("LEAFNODES");
-            rootElement.appendChild(leafNodesElement);
     
             // Add the initial root node to the syntax tree
             Element rootNode = syntaxTree.createElement("ROOT");
@@ -493,13 +518,22 @@ public class Parser {
             Element rootChildren = syntaxTree.createElement("CHILDREN");
             rootNode.appendChild(rootChildren);
     
-            // Now, append the root node to the syntax tree at the correct position
+            // Now, append the root node to the syntax tree at the correct position (first child)
             rootElement.appendChild(rootNode);
+    
+            // Create the inner nodes container element <INNERNODES>
+            innerNodesElement = syntaxTree.createElement("INNERNODES");
+            rootElement.appendChild(innerNodesElement);
+    
+            // Create the leaf nodes container element <LEAFNODES>
+            leafNodesElement = syntaxTree.createElement("LEAFNODES");
+            rootElement.appendChild(leafNodesElement);
     
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
 
     private void initializeParsingTable() {
         //Populate the TERMINALS and NONTERMINALS
