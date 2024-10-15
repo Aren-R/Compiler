@@ -136,7 +136,10 @@ public class Parser {
                 Element parentElement = syntaxTree.createElement("PARENT");
                 // Set the parent's UNID (the root's UNID)
                 parentElement.appendChild(syntaxTree.createTextNode(rootNode.getElementsByTagName("UNID").item(0).getTextContent()));
-                childNode.appendChild(parentElement);
+                
+                // Insert the PARENT element before the UNID element
+                Element unidElement = (Element) childNode.getElementsByTagName("UNID").item(0);
+                childNode.insertBefore(parentElement, unidElement);
             }
         }
     
@@ -154,11 +157,15 @@ public class Parser {
                 if (childNode != null) {
                     Element parentElement = syntaxTree.createElement("PARENT");
                     parentElement.appendChild(syntaxTree.createTextNode(innerNode.getElementsByTagName("UNID").item(0).getTextContent()));
-                    childNode.appendChild(parentElement);
+                    
+                    // Insert the PARENT element before the UNID element
+                    Element unidElement = (Element) childNode.getElementsByTagName("UNID").item(0);
+                    childNode.insertBefore(parentElement, unidElement);
                 }
             }
         }
     }
+    
     
     private Element findNodeById(int id) {
         NodeList leaves = leafNodesElement.getElementsByTagName("LEAF");
