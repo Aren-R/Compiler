@@ -57,7 +57,7 @@ public class Parser {
             String action = isVar ? terminalTable.get(state).get(tempWord) : terminalTable.get(state).get(tokenWord);
 
             if (action == null) {
-                System.out.println("Syntax Error at token: " + tokenWord);
+                System.out.println("\nSyntax Error at token: " + tokenWord + " (Token number " + i + ")");
                 break;
             }
 
@@ -87,7 +87,8 @@ public class Parser {
                 }
 
                 assignParents();
-                System.out.println("Accepted");
+                writeSyntaxTreeToFile("resources/syntaxTree.xml");
+                System.out.println("\nParsing Completed");
                 break;
             }
             
@@ -562,8 +563,6 @@ public class Parser {
             
             // Transform the syntax tree to the file
             transformer.transform(source, fileResult);
-            
-            System.out.println("Syntax tree successfully written to: " + filePath);
         } catch (TransformerException e) {
             e.printStackTrace();
         }

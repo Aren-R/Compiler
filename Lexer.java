@@ -3,7 +3,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Lexer {
+public class Lexer{
     public String inputStream; // The code that has to be lexed
     public States DFA; 
     private int lineNumber; // Counter for tracking the line number
@@ -33,7 +33,7 @@ public class Lexer {
     }
 
     // Run the lexer
-    public String runLexer() {
+    public String runLexer() throws InvalidTokenException {
         String tokenisedInputStream = "<TOKENSTREAM>\n";
         Integer indexOfInput = 0;
         Token token = new Token();
@@ -60,7 +60,7 @@ public class Lexer {
             // System.out.println("Current state: " + curState.classType);
 
             if (curState.classType.equals("Error: Transition not found")) {
-                return "Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'";
+                throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'");
             }
 
             if (currentChar.equals(" ") || currentChar.equals("\t") || currentChar.equals("\n") || currentChar.equals("\r")) {
@@ -69,7 +69,7 @@ public class Lexer {
                     tokenisedInputStream += token.toXML();
                     token.clearToken();
                 } else {
-                    return "Error at line " + lineNumber + ": Invalid token '" + token.contents + "'";
+                    throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + "'");
                 }
             } else {
                 token.addToToken(currentChar);
@@ -84,7 +84,7 @@ public class Lexer {
                 token.setType(curState.classType);
                 tokenisedInputStream += token.toXML();
             } else {
-                return "Error at line " + lineNumber + ": Incomplete or invalid token '" + token.contents + "'";
+                throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + "'");
             }
         }
 
@@ -138,5 +138,12 @@ public class Lexer {
             this.classType = "";
         }
     }
+
+    public class InvalidTokenException extends Exception {
+        public InvalidTokenException(String message) {
+            super(message);
+        }
+    }
+    
     //================================================================================================
 }
