@@ -94,7 +94,7 @@ public class Lexer{
         tokenisedInputStream += "</TOKENSTREAM>\n";
 
         // Save to XML
-        try (FileWriter fileWriter = new FileWriter("Tokens.xml")) {
+        try (FileWriter fileWriter = new FileWriter("resources/tokens.xml")) {
             fileWriter.write(tokenisedInputStream);
         } catch (IOException e) {
             e.printStackTrace();
