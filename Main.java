@@ -9,6 +9,8 @@ public class Main {
         Parser parser = new Parser();
         parser.setTokenStream(resultOfLexer); // Set the token stream for parsing
         parser.parse(); // Start parsing
-        parser.printSyntaxTree();  // Print the syntax tree after parsing
+        // parser.printSyntaxTree();  // Print the syntax tree after parsing
+        parser.writeSyntaxTreeToFile("resources/SyntaxTree.xml");
+
     }
 }

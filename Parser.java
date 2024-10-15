@@ -6,6 +6,7 @@ import org.xml.sax.InputSource;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 
 public class Parser {
 
@@ -33,42 +34,33 @@ public class Parser {
 
     public void parse() {
         stack.push(new TokenNode(0, "na", "PROG"));
-
+    
         NodeList tokens = tokenStream.getElementsByTagName("TOK");
-
+    
         int i = 0;
         while (true) {
-            // System.out.println("Stack: " + stack);
-
             Node token = tokens.item(i);
-
             Element tokenElement = (Element) token;
-            
+    
             String tokenWord = tokenElement.getElementsByTagName("WORD").item(0).getTextContent();
             String tokenClass = tokenElement.getElementsByTagName("CLASS").item(0).getTextContent();
-
+    
             int state = stack.peek().state;
-
+    
             boolean isVar = false;
             String tempWord = "";
             if (tokenClass.equals("V") || tokenClass.equals("F") || tokenClass.equals("N") || tokenClass.equals("T")) {
                 isVar = true;
                 tempWord = tokenClass;
             }
-
-            String action;
-            if (isVar) {
-                // System.out.println("TempWord: " + tempWord);
-                action = terminalTable.get(state).get(tempWord);
-            } else {
-                action = terminalTable.get(state).get(tokenWord);
-            }
-
-            //no defined action
+    
+            String action = isVar ? terminalTable.get(state).get(tempWord) : terminalTable.get(state).get(tokenWord);
+    
             if (action == null) {
                 System.out.println("Syntax Error at token: " + tokenWord);
                 break;
             }
+            
             if (action.equals("acc")) {
                 List<TokenNode> poppedNodes = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
@@ -97,24 +89,24 @@ public class Parser {
                 System.out.println("Accepted");
                 break;
             }
-
-
+    
             if (action.startsWith("s")) {
+                // SHIFT action
                 int nextState = Integer.parseInt(action.substring(1));
                 TokenNode newTokenNode = new TokenNode(nextState, tokenClass, tokenWord);
-                TokenNode oldTop = stack.peek();
-                newTokenNode.parent = oldTop;
-                stack.push(newTokenNode);
+                newTokenNode.parent = stack.peek(); // Set the parent to the current top of the stack
+                stack.push(newTokenNode); // Push the new node onto the stack
+    
+                // Add this token as a leaf node in the syntax tree
                 addLeafNode(token, newTokenNode);
                 i += 1;
             }
-
+    
             if (action.startsWith("r")) {
+                // REDUCE action
                 int ruleNumber = Integer.parseInt(action.substring(1));
                 applyReduction(ruleNumber);
             }
-
-
         }
     }
 
@@ -367,17 +359,21 @@ public class Parser {
             TokenNode poppedNode = stack.pop();
             poppedNodes.add(poppedNode);
         }
-
-
+    
+        // Create a new non-terminal node
         int newState = nonTerminalTable.get(stack.peek().state).get(nonTerminal);
         TokenNode newTokenNode = new TokenNode(newState, nonTerminal, nonTerminal);
-
-        for (TokenNode t : poppedNodes) {
-            t.parent = newTokenNode;
+        newTokenNode.parent = stack.peek(); // Set the parent to the current top of the stack
+    
+        // Link all the popped nodes as children to this new non-terminal node
+        for (TokenNode child : poppedNodes) {
+            child.parent = newTokenNode;
         }
-
-        newTokenNode.parent = stack.peek();
+    
+        // Push the new non-terminal node onto the stack
         stack.push(newTokenNode);
+    
+        // Add this non-terminal node as an inner node in the syntax tree
         addInnerNode(newTokenNode, poppedNodes);
     }
     
@@ -482,7 +478,31 @@ public class Parser {
             return "" + state;
         }
     }
-    
+
+    public void writeSyntaxTreeToFile(String filePath) {
+        try {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            
+            // Set formatting properties for the output
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            
+            // Source is the XML syntax tree document
+            DOMSource source = new DOMSource(syntaxTree);
+            
+            // StreamResult now writes to the specified file instead of the console
+            StreamResult fileResult = new StreamResult(new File(filePath));
+            
+            // Transform the syntax tree to the file
+            transformer.transform(source, fileResult);
+            
+            System.out.println("Syntax tree successfully written to: " + filePath);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initializeSyntaxTree() {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -526,12 +546,7 @@ public class Parser {
         }
     }
     
-
     private void initializeParsingTable() {
-        //Populate the TERMINALS and NONTERMINALS
-        Map<Integer, Map<String, String>> terminals = new HashMap<>();
-        Map<Integer, Map<String, Integer>> nonTerminals = new HashMap<>();
-
         // State 0 terminal table
         Map<String, String> terminalRow0 = new HashMap<>();
         terminalRow0.put("main", "s1");
