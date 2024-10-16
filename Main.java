@@ -15,9 +15,20 @@ public class Main {
         Parser parser = new Parser();
         parser.setTokenStream(resultOfLexer); // Set the token stream for parsing
         parser.parse();
+        System.out.println("\nParsing Completed");
 
-        //SEMANTIC ANALYSIS
-
+        // SEMANTIC ANALYSIS (Scope Analyzer)
+        ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+        try {
+            scopeAnalyzer.analyze("resources/syntaxTree.xml");
+            System.out.println("\nScope Analysis Completed");
+            
+            // Print the symbol table
+            scopeAnalyzer.getScopeManager().printSymbolTable();
+        } catch (Exception e) {
+            System.out.println("Error during scope analysis:");
+            e.printStackTrace();
+        }
 
     }
 }
