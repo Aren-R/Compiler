@@ -21,10 +21,8 @@ public class Main {
         ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
         try {
             scopeAnalyzer.analyze("resources/syntaxTree.xml");
-            System.out.println("\nScope Analysis Completed");
-            
-            // Print the symbol table
             scopeAnalyzer.getScopeManager().printSymbolTable();
+            System.out.println("\nScope Analysis Completed");
         } catch (Exception e) {
             System.out.println("Error during scope analysis:");
             e.printStackTrace();
