@@ -1,7 +1,20 @@
 main
-num V_x , text V_msg , num V_y ,
 begin
-    V_x = add ( 5 , 3 ) ;
-    V_msg = "Hello" ;
-    return V_msg ;
+    x < input;
+    y = F1(x, 10, "hello");
+    print y;
+    if eq(x, y) then
+        halt;
+    else
+        skip;
+end
+
+F1(num x, num y, text z)
+{
+    num a, num b, num c,
+    a = add(x, y);
+    b = sqrt(a);
+    print b;
+    return b;
+}
 end

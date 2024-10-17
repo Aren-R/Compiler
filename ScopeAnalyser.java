@@ -6,8 +6,14 @@ public class ScopeAnalyser {
     public static int uniqueFunctionCounter = 0;
     public static int uniqueScopeCounter = 0;
     public Stack<Scope> scopeStack = new Stack<>();
+    public List<String> bannedVariables;
     
     public ScopeAnalyser(TreeNode root) {
+        bannedVariables = new ArrayList<>(Arrays.asList(
+            "mul", "main", "grt", "div", "void", "print", "return",
+            ",", ";", "=", "(", ")", "{", "}", "num", "not",
+            "text", "then", "begin", "end", "else", "eq", "sqrt",
+            "sub", "skip", "halt", "if", "or", "and", "add", "<input"));
         this.root = root;
     }
 
@@ -50,16 +56,9 @@ public class ScopeAnalyser {
 
             case "DECL": {
                 scopeStack.push(new Scope(scopeStack.peek()));
+                printScopeStack();
                 handleHeader(node.children.get(0));
                 traverseTree(node.children.get(1));
-                break;
-            }
-
-            case "BODY": {
-                scopeStack.push(new Scope(scopeStack.peek()));
-                for (TreeNode child : node.children) {
-                    traverseTree(child);
-                }
                 break;
             }
             
@@ -70,6 +69,24 @@ public class ScopeAnalyser {
                 break;
             }
         }
+    }
+
+    public void printScopeStack() {
+        System.out.println("Current Scope Stack:");
+        for (Scope scope : scopeStack) {
+            System.out.println("Scope ID: " + scope.id);
+            printSymbolTable(scope.symbolTable);
+        }
+    }
+    
+    public void printSymbolTable(Scope.SymbolTable symbolTable) {
+        System.out.println("Symbol Table:");
+        for (Map.Entry<String, Scope.SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
+            String symbol = entry.getKey();
+            Scope.SymbolTable.SymbolInfo info = entry.getValue();
+            System.out.println("[Symbol: " + symbol + "\t, type:\t" + info.type + ", unique name:\t" + info.newName+"]");
+        }
+        System.out.println();
     }
 
     public void handleGlobVars(TreeNode node) {
@@ -198,17 +215,22 @@ public class ScopeAnalyser {
         }
 
         public String lookup(String name) throws Exception {
-            Scope currentScope = this;
-            while (currentScope != null) {
-                if (currentScope.symbolTable.table.containsKey(name)) {
-                    return currentScope.symbolTable.table.get(name).newName;
-                }
-                currentScope = currentScope.parent;
-            }
+
             if (name.startsWith("F")) {
+                if (this.symbolTable.table.containsKey(name)) {
+                    return this.symbolTable.table.get(name).newName;
+                }
                 throw new Exception("Function " + name + " not declared");
+            } else {
+                Scope currentScope = this;
+                while (currentScope != null) {
+                    if (currentScope.symbolTable.table.containsKey(name)) {
+                        return currentScope.symbolTable.table.get(name).newName;
+                    }
+                    currentScope = currentScope.parent;
+                }
+                throw new Exception("Variable " + name + " not declared");
             }
-            throw new Exception("Variable " + name + " not declared");
         }
 
         public class SymbolTable {
@@ -224,11 +246,15 @@ public class ScopeAnalyser {
                         System.out.println("Error: Double decleration of function " + name);
                         System.exit(1);
                     }
-
                     table.put(name, new SymbolInfo(name, type));
                     return;
                 }
 
+
+                if (bannedVariables.contains(name.substring(2))) {
+                    System.out.println("Error: Variable name " + name + " is reserved");
+                    System.exit(1);
+                }
 
                 if (table.containsKey(name)) {
                     System.out.println("Error: Double decleration of variable " + name);
