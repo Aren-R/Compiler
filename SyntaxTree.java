@@ -3,8 +3,8 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 class SyntaxTree {
-    private TreeNode root;
-    private Map<String, TreeNode> nodeMap; // To map UNIDs to nodes for quick access
+    public TreeNode root;
+    public Map<String, TreeNode> nodeMap; // To map UNIDs to nodes for quick access
 
     public SyntaxTree(String xmlFilePath) {
         nodeMap = new HashMap<>();
@@ -12,7 +12,7 @@ class SyntaxTree {
     }
 
     // Build the syntax tree from XML
-    private void buildTree(String xmlFilePath) {
+    public void buildTree(String xmlFilePath) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -48,14 +48,14 @@ class SyntaxTree {
     }
 
     // Process a general node (either root or inner node)
-    private TreeNode processNode(Element nodeElement) {
+    public TreeNode processNode(Element nodeElement) {
         String id = nodeElement.getElementsByTagName("UNID").item(0).getTextContent();
         String symbol = nodeElement.getElementsByTagName("SYMB").item(0).getTextContent();
         return new TreeNode(id, symbol);
     }
 
     // Process a leaf node with additional fields like ID, CLASS, and WORD
-    private TreeNode processLeafNode(Element leafElement) {
+    public TreeNode processLeafNode(Element leafElement) {
         String id = leafElement.getElementsByTagName("UNID").item(0).getTextContent();
         Element terminal = (Element) leafElement.getElementsByTagName("TERMINAL").item(0);
         Element tok = (Element) terminal.getElementsByTagName("TOK").item(0);
@@ -69,7 +69,7 @@ class SyntaxTree {
     }
 
     // Establish parent-child relationships by reading the "PARENT" and "CHILDREN" fields
-    private void establishParentChildRelationships(Element rootElement) {
+    public void establishParentChildRelationships(Element rootElement) {
         // Handle the ROOT node first
         Element rootNodeElement = (Element) rootElement.getElementsByTagName("ROOT").item(0);
         establishChildren(rootNodeElement, root);
@@ -91,7 +91,7 @@ class SyntaxTree {
     }
 
     // Establish the children for a given node
-    private void establishChildren(Element nodeElement, TreeNode parentNode) {
+    public void establishChildren(Element nodeElement, TreeNode parentNode) {
         NodeList childrenList = nodeElement.getElementsByTagName("CHILDREN").item(0).getChildNodes();
         for (int i = 0; i < childrenList.getLength(); i++) {
             Node childNode = childrenList.item(i);
@@ -111,7 +111,7 @@ class SyntaxTree {
     }
 
     // Recursive method to print each node and its children
-    private void printNode(TreeNode node, int depth) {
+    public void printNode(TreeNode node, int depth) {
         for (int i = 0; i < depth; i++) System.out.print("|"); // Indentation for hierarchy
         System.out.println(node); // Print the current node
         for (TreeNode child : node.getChildren()) {
@@ -124,15 +124,17 @@ class SyntaxTree {
 class TreeNode {
     public String id;
     public String symbol;
-    public String tokenId;  // New field for token ID
-    public String tokenClass; // New field for token class
+    public String tokenId;  
+    public String tokenClass; 
     public List<TreeNode> children;
+    public TreeNode parent;  
 
     // Constructor for inner/root nodes
     public TreeNode(String id, String symbol) {
         this.id = id;
         this.symbol = symbol;
         this.children = new ArrayList<>();
+        this.parent = null;
     }
 
     // Constructor for leaf nodes with extra fields (ID, CLASS, WORD)
@@ -142,6 +144,7 @@ class TreeNode {
         this.tokenId = tokenId;
         this.tokenClass = tokenClass;
         this.children = new ArrayList<>();
+        this.parent = null;
     }
 
     public String getId() {
@@ -160,8 +163,17 @@ class TreeNode {
         return tokenClass;
     }
 
+    public TreeNode getParent() {
+        return parent;
+    }
+
+    public void setParent(TreeNode parent) {
+        this.parent = parent;
+    }
+
     public void addChild(TreeNode child) {
         children.add(child);
+        child.setParent(this); 
     }
 
     public List<TreeNode> getChildren() {
@@ -171,7 +183,7 @@ class TreeNode {
     @Override
     public String toString() {
         if (tokenId != null && tokenClass != null) {
-            return "Leaf [ID=" + id + ", Symbol=" + symbol + ", TokenID=" + tokenId + ", TokenClass=" + tokenClass + "]";
+            return "Leaf [ID=" + id + ", Symbol=" + symbol + ", TokenID=" + tokenId + ", TokenClass=" + tokenClass + ", Parent=" + parent.symbol + "]";
         }
         return "Node [ID=" + id + ", Symbol=" + symbol + "]";
     }
