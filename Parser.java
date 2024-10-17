@@ -32,7 +32,7 @@ public class Parser {
         initializeSyntaxTree();
     }
 
-    public void parse() {
+    public void parse() throws Exception {
         stack.push(new TokenNode(0, "na", "PROG"));
 
         NodeList tokens = tokenStream.getElementsByTagName("TOK");
@@ -57,8 +57,7 @@ public class Parser {
             String action = isVar ? terminalTable.get(state).get(tempWord) : terminalTable.get(state).get(tokenWord);
 
             if (action == null) {
-                System.out.println("\nSyntax Error at token: " + tokenWord + " (Token number " + i + ")");
-                break;
+                throw new Exception("Syntax Error at token: " + tokenWord + " (Token number " + i + ")");
             }
 
             if (action.equals("acc")) {

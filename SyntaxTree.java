@@ -22,14 +22,14 @@ class SyntaxTree {
             // Process the root node
             Element rootNodeElement = (Element) rootElement.getElementsByTagName("ROOT").item(0);
             root = processNode(rootNodeElement);
-            nodeMap.put(root.getId(), root);
+            nodeMap.put(root.id, root);
 
             // Process inner nodes
             NodeList innerNodes = rootElement.getElementsByTagName("IN");
             for (int i = 0; i < innerNodes.getLength(); i++) {
                 Element innerNodeElement = (Element) innerNodes.item(i);
                 TreeNode innerNode = processNode(innerNodeElement);
-                nodeMap.put(innerNode.getId(), innerNode);
+                nodeMap.put(innerNode.id, innerNode);
             }
 
             // Process leaf nodes
@@ -37,7 +37,7 @@ class SyntaxTree {
             for (int i = 0; i < leafNodes.getLength(); i++) {
                 Element leafNodeElement = (Element) leafNodes.item(i);
                 TreeNode leafNode = processLeafNode(leafNodeElement);
-                nodeMap.put(leafNode.getId(), leafNode);
+                nodeMap.put(leafNode.id, leafNode);
             }
 
             // Establish parent-child relationships
@@ -76,7 +76,7 @@ class SyntaxTree {
 
         // Handle inner nodes
         NodeList innerNodes = rootElement.getElementsByTagName("IN");
-        for (int i = 0; i < innerNodes.getLength(); i++) {
+        for (int i = innerNodes.getLength()-1; i >= 0; i--) {
             Element innerNodeElement = (Element) innerNodes.item(i);
             TreeNode childNode = nodeMap.get(innerNodeElement.getElementsByTagName("UNID").item(0).getTextContent());
             String parentId = innerNodeElement.getElementsByTagName("PARENT").item(0).getTextContent();
@@ -93,7 +93,7 @@ class SyntaxTree {
     // Establish the children for a given node
     public void establishChildren(Element nodeElement, TreeNode parentNode) {
         NodeList childrenList = nodeElement.getElementsByTagName("CHILDREN").item(0).getChildNodes();
-        for (int i = 0; i < childrenList.getLength(); i++) {
+        for (int i = childrenList.getLength()-1; i >= 0; i--) {
             Node childNode = childrenList.item(i);
             if (childNode.getNodeType() == Node.ELEMENT_NODE) {
                 String childId = childNode.getTextContent();
@@ -111,7 +111,7 @@ class SyntaxTree {
     }
 
     // Recursive method to print each node and its children
-    public void printNode(TreeNode node, int depth) {
+    private void printNode(TreeNode node, int depth) {
         for (int i = 0; i < depth; i++) System.out.print("|"); // Indentation for hierarchy
         System.out.println(node); // Print the current node
         for (TreeNode child : node.getChildren()) {
@@ -147,33 +147,9 @@ class TreeNode {
         this.parent = null;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public String getTokenId() {
-        return tokenId;
-    }
-
-    public String getTokenClass() {
-        return tokenClass;
-    }
-
-    public TreeNode getParent() {
-        return parent;
-    }
-
-    public void setParent(TreeNode parent) {
-        this.parent = parent;
-    }
-
     public void addChild(TreeNode child) {
         children.add(child);
-        child.setParent(this); 
+        child.parent = this; 
     }
 
     public List<TreeNode> getChildren() {

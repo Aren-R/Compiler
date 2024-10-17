@@ -4,15 +4,15 @@
         <UNID>1</UNID>
         <SYMB>PROG</SYMB>
         <CHILDREN>
-            <ID>32</ID>
-            <ID>31</ID>
-            <ID>9</ID>
+            <ID>66</ID>
+            <ID>65</ID>
+            <ID>21</ID>
             <ID>2</ID>
         </CHILDREN>
     </ROOT>
     <INNERNODES>
         <IN>
-            <PARENT>9</PARENT>
+            <PARENT>21</PARENT>
             <UNID>4</UNID>
             <SYMB>VTYP</SYMB>
             <CHILDREN>
@@ -20,7 +20,7 @@
             </CHILDREN>
         </IN>
         <IN>
-            <PARENT>9</PARENT>
+            <PARENT>21</PARENT>
             <UNID>6</UNID>
             <SYMB>VNAME</SYMB>
             <CHILDREN>
@@ -28,136 +28,303 @@
             </CHILDREN>
         </IN>
         <IN>
-            <PARENT>9</PARENT>
-            <UNID>8</UNID>
+            <PARENT>20</PARENT>
+            <UNID>9</UNID>
+            <SYMB>VTYP</SYMB>
+            <CHILDREN>
+                <ID>8</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>20</PARENT>
+            <UNID>11</UNID>
+            <SYMB>VNAME</SYMB>
+            <CHILDREN>
+                <ID>10</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>19</PARENT>
+            <UNID>14</UNID>
+            <SYMB>VTYP</SYMB>
+            <CHILDREN>
+                <ID>13</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>19</PARENT>
+            <UNID>16</UNID>
+            <SYMB>VNAME</SYMB>
+            <CHILDREN>
+                <ID>15</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>19</PARENT>
+            <UNID>18</UNID>
             <SYMB>GLOBVARS</SYMB>
             <CHILDREN/>
         </IN>
         <IN>
-            <PARENT>1</PARENT>
-            <UNID>9</UNID>
+            <PARENT>20</PARENT>
+            <UNID>19</UNID>
             <SYMB>GLOBVARS</SYMB>
             <CHILDREN>
-                <ID>8</ID>
+                <ID>18</ID>
+                <ID>17</ID>
+                <ID>16</ID>
+                <ID>14</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>21</PARENT>
+            <UNID>20</UNID>
+            <SYMB>GLOBVARS</SYMB>
+            <CHILDREN>
+                <ID>19</ID>
+                <ID>12</ID>
+                <ID>11</ID>
+                <ID>9</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>1</PARENT>
+            <UNID>21</UNID>
+            <SYMB>GLOBVARS</SYMB>
+            <CHILDREN>
+                <ID>20</ID>
                 <ID>7</ID>
                 <ID>6</ID>
                 <ID>4</ID>
             </CHILDREN>
         </IN>
         <IN>
-            <PARENT>18</PARENT>
-            <UNID>12</UNID>
-            <SYMB>VNAME</SYMB>
-            <CHILDREN>
-                <ID>11</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>16</PARENT>
-            <UNID>15</UNID>
-            <SYMB>CONST</SYMB>
-            <CHILDREN>
-                <ID>14</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>17</PARENT>
-            <UNID>16</UNID>
-            <SYMB>ATOMIC</SYMB>
-            <CHILDREN>
-                <ID>15</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>18</PARENT>
-            <UNID>17</UNID>
-            <SYMB>TERM</SYMB>
-            <CHILDREN>
-                <ID>16</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>19</PARENT>
-            <UNID>18</UNID>
-            <SYMB>ASSIGN</SYMB>
-            <CHILDREN>
-                <ID>17</ID>
-                <ID>13</ID>
-                <ID>12</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>29</PARENT>
-            <UNID>19</UNID>
-            <SYMB>COMMAND</SYMB>
-            <CHILDREN>
-                <ID>18</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>24</PARENT>
-            <UNID>23</UNID>
-            <SYMB>VNAME</SYMB>
-            <CHILDREN>
-                <ID>22</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>25</PARENT>
+            <PARENT>41</PARENT>
             <UNID>24</UNID>
-            <SYMB>ATOMIC</SYMB>
+            <SYMB>VNAME</SYMB>
             <CHILDREN>
                 <ID>23</ID>
             </CHILDREN>
         </IN>
         <IN>
-            <PARENT>28</PARENT>
-            <UNID>25</UNID>
-            <SYMB>COMMAND</SYMB>
-            <CHILDREN>
-                <ID>24</ID>
-                <ID>21</ID>
-            </CHILDREN>
-        </IN>
-        <IN>
-            <PARENT>28</PARENT>
+            <PARENT>39</PARENT>
             <UNID>27</UNID>
-            <SYMB>INSTRUC</SYMB>
-            <CHILDREN/>
-        </IN>
-        <IN>
-            <PARENT>29</PARENT>
-            <UNID>28</UNID>
-            <SYMB>INSTRUC</SYMB>
+            <SYMB>BINOP</SYMB>
             <CHILDREN>
-                <ID>27</ID>
                 <ID>26</ID>
-                <ID>25</ID>
             </CHILDREN>
         </IN>
         <IN>
             <PARENT>31</PARENT>
-            <UNID>29</UNID>
-            <SYMB>INSTRUC</SYMB>
+            <UNID>30</UNID>
+            <SYMB>CONST</SYMB>
             <CHILDREN>
-                <ID>28</ID>
-                <ID>20</ID>
-                <ID>19</ID>
+                <ID>29</ID>
             </CHILDREN>
         </IN>
         <IN>
-            <PARENT>1</PARENT>
+            <PARENT>32</PARENT>
             <UNID>31</UNID>
-            <SYMB>ALGO</SYMB>
+            <SYMB>ATOMIC</SYMB>
             <CHILDREN>
                 <ID>30</ID>
-                <ID>29</ID>
-                <ID>10</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>39</PARENT>
+            <UNID>32</UNID>
+            <SYMB>ARG</SYMB>
+            <CHILDREN>
+                <ID>31</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>36</PARENT>
+            <UNID>35</UNID>
+            <SYMB>CONST</SYMB>
+            <CHILDREN>
+                <ID>34</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>37</PARENT>
+            <UNID>36</UNID>
+            <SYMB>ATOMIC</SYMB>
+            <CHILDREN>
+                <ID>35</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>39</PARENT>
+            <UNID>37</UNID>
+            <SYMB>ARG</SYMB>
+            <CHILDREN>
+                <ID>36</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>40</PARENT>
+            <UNID>39</UNID>
+            <SYMB>OP</SYMB>
+            <CHILDREN>
+                <ID>38</ID>
+                <ID>37</ID>
+                <ID>33</ID>
+                <ID>32</ID>
+                <ID>28</ID>
+                <ID>27</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>41</PARENT>
+            <UNID>40</UNID>
+            <SYMB>TERM</SYMB>
+            <CHILDREN>
+                <ID>39</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>42</PARENT>
+            <UNID>41</UNID>
+            <SYMB>ASSIGN</SYMB>
+            <CHILDREN>
+                <ID>40</ID>
+                <ID>25</ID>
+                <ID>24</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>63</PARENT>
+            <UNID>42</UNID>
+            <SYMB>COMMAND</SYMB>
+            <CHILDREN>
+                <ID>41</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>51</PARENT>
+            <UNID>45</UNID>
+            <SYMB>VNAME</SYMB>
+            <CHILDREN>
+                <ID>44</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>49</PARENT>
+            <UNID>48</UNID>
+            <SYMB>CONST</SYMB>
+            <CHILDREN>
+                <ID>47</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>50</PARENT>
+            <UNID>49</UNID>
+            <SYMB>ATOMIC</SYMB>
+            <CHILDREN>
+                <ID>48</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>51</PARENT>
+            <UNID>50</UNID>
+            <SYMB>TERM</SYMB>
+            <CHILDREN>
+                <ID>49</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>52</PARENT>
+            <UNID>51</UNID>
+            <SYMB>ASSIGN</SYMB>
+            <CHILDREN>
+                <ID>50</ID>
+                <ID>46</ID>
+                <ID>45</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>62</PARENT>
+            <UNID>52</UNID>
+            <SYMB>COMMAND</SYMB>
+            <CHILDREN>
+                <ID>51</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>57</PARENT>
+            <UNID>56</UNID>
+            <SYMB>VNAME</SYMB>
+            <CHILDREN>
+                <ID>55</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>58</PARENT>
+            <UNID>57</UNID>
+            <SYMB>ATOMIC</SYMB>
+            <CHILDREN>
+                <ID>56</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>61</PARENT>
+            <UNID>58</UNID>
+            <SYMB>COMMAND</SYMB>
+            <CHILDREN>
+                <ID>57</ID>
+                <ID>54</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>61</PARENT>
+            <UNID>60</UNID>
+            <SYMB>INSTRUC</SYMB>
+            <CHILDREN/>
+        </IN>
+        <IN>
+            <PARENT>62</PARENT>
+            <UNID>61</UNID>
+            <SYMB>INSTRUC</SYMB>
+            <CHILDREN>
+                <ID>60</ID>
+                <ID>59</ID>
+                <ID>58</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>63</PARENT>
+            <UNID>62</UNID>
+            <SYMB>INSTRUC</SYMB>
+            <CHILDREN>
+                <ID>61</ID>
+                <ID>53</ID>
+                <ID>52</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>65</PARENT>
+            <UNID>63</UNID>
+            <SYMB>INSTRUC</SYMB>
+            <CHILDREN>
+                <ID>62</ID>
+                <ID>43</ID>
+                <ID>42</ID>
             </CHILDREN>
         </IN>
         <IN>
             <PARENT>1</PARENT>
-            <UNID>32</UNID>
+            <UNID>65</UNID>
+            <SYMB>ALGO</SYMB>
+            <CHILDREN>
+                <ID>64</ID>
+                <ID>63</ID>
+                <ID>22</ID>
+            </CHILDREN>
+        </IN>
+        <IN>
+            <PARENT>1</PARENT>
+            <UNID>66</UNID>
             <SYMB>FUNCTIONS</SYMB>
             <CHILDREN/>
         </IN>
@@ -203,13 +370,13 @@
                     
                     <CLASS>V</CLASS>
                     
-                    <WORD>V_x</WORD>
+                    <WORD>V_xf</WORD>
                     
                 </TOK>
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>9</PARENT>
+            <PARENT>21</PARENT>
             <UNID>7</UNID>
             <TERMINAL>
                 <TOK>
@@ -224,12 +391,102 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>31</PARENT>
-            <UNID>10</UNID>
+            <PARENT>9</PARENT>
+            <UNID>8</UNID>
             <TERMINAL>
                 <TOK>
                     
                     <ID>5</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>text</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>11</PARENT>
+            <UNID>10</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>6</ID>
+                    
+                    <CLASS>V</CLASS>
+                    
+                    <WORD>V_msg</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>20</PARENT>
+            <UNID>12</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>7</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>,</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>14</PARENT>
+            <UNID>13</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>8</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>num</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>16</PARENT>
+            <UNID>15</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>9</ID>
+                    
+                    <CLASS>V</CLASS>
+                    
+                    <WORD>V_y</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>19</PARENT>
+            <UNID>17</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>10</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>,</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>65</PARENT>
+            <UNID>22</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>11</ID>
                     
                     <CLASS>reserved_word</CLASS>
                     
@@ -239,27 +496,27 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>12</PARENT>
-            <UNID>11</UNID>
+            <PARENT>24</PARENT>
+            <UNID>23</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>6</ID>
+                    <ID>12</ID>
                     
                     <CLASS>V</CLASS>
                     
-                    <WORD>V_c</WORD>
+                    <WORD>V_x</WORD>
                     
                 </TOK>
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>18</PARENT>
-            <UNID>13</UNID>
+            <PARENT>41</PARENT>
+            <UNID>25</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>7</ID>
+                    <ID>13</ID>
                     
                     <CLASS>reserved_word</CLASS>
                     
@@ -269,12 +526,147 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>15</PARENT>
-            <UNID>14</UNID>
+            <PARENT>27</PARENT>
+            <UNID>26</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>8</ID>
+                    <ID>14</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>add</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>39</PARENT>
+            <UNID>28</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>15</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>(</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>30</PARENT>
+            <UNID>29</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>16</ID>
+                    
+                    <CLASS>N</CLASS>
+                    
+                    <WORD>5</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>39</PARENT>
+            <UNID>33</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>17</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>,</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>35</PARENT>
+            <UNID>34</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>18</ID>
+                    
+                    <CLASS>N</CLASS>
+                    
+                    <WORD>3</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>39</PARENT>
+            <UNID>38</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>19</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>)</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>63</PARENT>
+            <UNID>43</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>20</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>;</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>45</PARENT>
+            <UNID>44</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>21</ID>
+                    
+                    <CLASS>V</CLASS>
+                    
+                    <WORD>V_msg</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>51</PARENT>
+            <UNID>46</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>22</ID>
+                    
+                    <CLASS>reserved_word</CLASS>
+                    
+                    <WORD>=</WORD>
+                    
+                </TOK>
+            </TERMINAL>
+        </LEAF>
+        <LEAF>
+            <PARENT>48</PARENT>
+            <UNID>47</UNID>
+            <TERMINAL>
+                <TOK>
+                    
+                    <ID>23</ID>
                     
                     <CLASS>T</CLASS>
                     
@@ -284,12 +676,12 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>29</PARENT>
-            <UNID>20</UNID>
+            <PARENT>62</PARENT>
+            <UNID>53</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>9</ID>
+                    <ID>24</ID>
                     
                     <CLASS>reserved_word</CLASS>
                     
@@ -299,12 +691,12 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>25</PARENT>
-            <UNID>21</UNID>
+            <PARENT>58</PARENT>
+            <UNID>54</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>10</ID>
+                    <ID>25</ID>
                     
                     <CLASS>reserved_word</CLASS>
                     
@@ -314,27 +706,27 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>23</PARENT>
-            <UNID>22</UNID>
+            <PARENT>56</PARENT>
+            <UNID>55</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>11</ID>
+                    <ID>26</ID>
                     
                     <CLASS>V</CLASS>
                     
-                    <WORD>V_v</WORD>
+                    <WORD>V_msg</WORD>
                     
                 </TOK>
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>28</PARENT>
-            <UNID>26</UNID>
+            <PARENT>61</PARENT>
+            <UNID>59</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>12</ID>
+                    <ID>27</ID>
                     
                     <CLASS>reserved_word</CLASS>
                     
@@ -344,12 +736,12 @@
             </TERMINAL>
         </LEAF>
         <LEAF>
-            <PARENT>31</PARENT>
-            <UNID>30</UNID>
+            <PARENT>65</PARENT>
+            <UNID>64</UNID>
             <TERMINAL>
                 <TOK>
                     
-                    <ID>13</ID>
+                    <ID>28</ID>
                     
                     <CLASS>reserved_word</CLASS>
                     
