@@ -1,7 +1,6 @@
 main
-num V_x , text V_msg , num V_y ,
+num V_x ,
 begin
-    V_z = add ( 5 , 3 ) ;
     V_c = "Hello" ;
     return V_v ;
 end
