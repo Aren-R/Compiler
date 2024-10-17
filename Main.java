@@ -18,8 +18,9 @@ public class Main {
         System.out.println("\nParsing Completed");
 
         // SEMANTIC ANALYSIS (Scope Analyzer)
-        ScopeAnalyser scopeAnalyzer = new ScopeAnalyser();
+        ScopeAnalyser scopeAnalyser = new ScopeAnalyser();
         try {
+            scopeAnalyser.printSymbolTables();
             System.out.println("\nScope Analysis Completed");
         } catch (Exception e) {
             System.out.println("Error during scope analysis:");
