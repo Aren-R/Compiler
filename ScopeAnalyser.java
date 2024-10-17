@@ -84,7 +84,7 @@ public class ScopeAnalyser {
         for (Map.Entry<String, Scope.SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
             String symbol = entry.getKey();
             Scope.SymbolTable.SymbolInfo info = entry.getValue();
-            System.out.println("[Symbol: " + symbol + "\t, type:\t" + info.type + ", unique name:\t" + info.newName+"]");
+            System.out.println("[Symbol: " + symbol + ", type: " + info.type + ", unique name: " + info.newName+"]");
         }
         System.out.println();
     }
@@ -175,14 +175,9 @@ public class ScopeAnalyser {
         String name2 = VNAME2.children.get(0).symbol;
         String name3 = VNAME3.children.get(0).symbol;
 
-        try {
-            scopeStack.peek().lookup(name1);
-            scopeStack.peek().lookup(name2);
-            scopeStack.peek().lookup(name3);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
-        }
+        scopeStack.peek().symbolTable.addSymbol(name1, "num");
+        scopeStack.peek().symbolTable.addSymbol(name2, "num");
+        scopeStack.peek().symbolTable.addSymbol(name3, "num");
 
     }
 
