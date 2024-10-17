@@ -21,5 +21,10 @@ public class Main {
         SyntaxTree syntaxTree = new SyntaxTree("resources/SyntaxTree.xml");
         syntaxTree.printTree();
 
+        // Scope analysis
+        ScopeAnalyser ScopeAnalyser = new ScopeAnalyser();
+        ScopeAnalyser.analyse(syntaxTree.root);
+
+        System.out.println("\nSemantic Analysis Completed");
     }
 }

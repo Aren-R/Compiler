@@ -3,7 +3,7 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 class SyntaxTree {
-    private TreeNode root;
+    public TreeNode root;
     private Map<String, TreeNode> nodeMap; // To map UNIDs to nodes for quick access
 
     public SyntaxTree(String xmlFilePath) {
@@ -98,24 +98,24 @@ class SyntaxTree {
             if (childNode.getNodeType() == Node.ELEMENT_NODE) {
                 String childId = childNode.getTextContent();
                 TreeNode childTreeNode = nodeMap.get(childId);
-                if (!parentNode.getChildren().contains(childTreeNode)) {  // Prevent duplicate children
+                if (!parentNode.getChildren().contains(childTreeNode)) {
                     parentNode.addChild(childTreeNode);
                 }
             }
         }
     }
 
-    // Method to print the syntax tree structure
+
     public void printTree() {
         printNode(root, 0);
     }
 
-    // Recursive method to print each node and its children
+
     private void printNode(TreeNode node, int depth) {
-        for (int i = 0; i < depth; i++) System.out.print("|"); // Indentation for hierarchy
-        System.out.println(node); // Print the current node
+        for (int i = 0; i < depth; i++) System.out.print("|");
+        System.out.println(node); 
         for (TreeNode child : node.getChildren()) {
-            printNode(child, depth + 1); // Recursively print children
+            printNode(child, depth + 1); 
         }
     }
 }
