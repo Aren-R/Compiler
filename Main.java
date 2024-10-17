@@ -18,10 +18,8 @@ public class Main {
         System.out.println("\nParsing Completed");
 
         // SEMANTIC ANALYSIS (Scope Analyzer)
-        ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+        ScopeAnalyser scopeAnalyzer = new ScopeAnalyser();
         try {
-            scopeAnalyzer.analyze("resources/syntaxTree.xml");
-            scopeAnalyzer.getScopeManager().printSymbolTable();
             System.out.println("\nScope Analysis Completed");
         } catch (Exception e) {
             System.out.println("Error during scope analysis:");

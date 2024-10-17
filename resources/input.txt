@@ -1,50 +1,6 @@
 main
 num V_x , text V_msg , num V_y ,
 begin
-    V_x = add ( 5 , 3 ) ;
     V_msg = "Hello" ;
-    V_x = F_compute ( V_x , 2 , 3 ) ;
     return V_msg ;
-    if eq ( V_x , 8 ) then
-        begin
-            V_y = mul ( V_x , 2 ) ;
-        end
-    else
-        begin
-            halt ;
-        end ;
-end
-num F_compute ( V_a , V_b , V_c ) {
-    num V_temp1 , text V_temp2 , num V_temp3 ,
-    begin
-        V_temp1 = add ( V_a , V_b ) ;
-        if grt ( V_temp1 , V_c ) then
-            begin
-                print V_temp1 ;
-            end
-        else
-            begin
-                print V_c ;
-            end ;
-    end
-}
-end
-num F_another ( V_d , V_e , V_f ) {
-    num V_sum , num V_product , text V_msg ,
-    begin
-        V_sum = add ( V_d , V_e ) ;
-        V_product = mul ( V_d , V_f ) ;
-        if eq ( V_sum , 10 ) then
-            begin
-                V_msg = "Sumisten" ;
-                print V_msg ;
-            end
-        else
-            begin
-                V_msg = "Sumnot" ;
-                print V_msg ;
-            end ;
-        return V_product ;
-    end
-}
 end

@@ -88,7 +88,6 @@ public class Parser {
 
                 assignParents();
                 writeSyntaxTreeToFile("resources/syntaxTree.xml");
-                System.out.println("\nParsing Completed");
                 break;
             }
             

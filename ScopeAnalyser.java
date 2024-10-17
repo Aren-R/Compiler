@@ -3,193 +3,108 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
+public class ScopeAnalyser {
+    public Node root;
+    public NodeList innerNodes;
+    public NodeList leafNodes;
 
-class SymbolTable {
-    private Map<String, Symbol> table;
-
-    public SymbolTable() {
-        table = new HashMap<>();
+    public ScopeAnalyser() {
+        getNodes("resources/SyntaxTree.xml");
+        traverseTree(root);
     }
 
-    public void addSymbol(String name, Symbol symbol) throws Exception {
-        if (table.containsKey(name)) {
-            throw new Exception("Symbol " + name + " already declared in this scope.");
+    public void analyze(String xmlPath) {
+        // To be implemented later if needed
+    }
+
+    public void traverseTree(Node currentNode) {
+        System.out.println("=== IN NEW NODE ===");
+        System.out.println("Node: " + currentNode.getNodeName());
+    
+        // Check if the current node is a leaf node
+        if (currentNode.getNodeName().equals("LEAF")) {
+            System.out.println("Leaf Reached");
+            System.out.println(currentNode.getTextContent());
+            return;
         }
-        table.put(name, symbol);
-    }
-
-    public Symbol getSymbol(String name) {
-        return table.get(name);
-    }
-
-    public boolean contains(String name) {
-        return table.containsKey(name);
-    }
-
-    public Map<String, Symbol> getSymbols() {
-        return table;
-    }
-}
-
-class Symbol {
-    private String name;
-    private String type;
-    private int scopeId;
-
-    public Symbol(String name, String type, int scopeId) {
-        this.name = name;
-        this.type = type;
-        this.scopeId = scopeId;
-    }
-
-    public String getName() { return name; }
-    public String getType() { return type; }
-    public int getScopeId() { return scopeId; }
-}
-
-
-class ScopeManager {
-    private Stack<Integer> scopeStack;
-    private Map<Integer, SymbolTable> scopeTables;
-    private int currentScopeId;
-
-    public ScopeManager() {
-        scopeStack = new Stack<>();
-        scopeTables = new HashMap<>();
-        currentScopeId = 0;
-        openScope();
-    }
-
-    public void openScope() {
-        currentScopeId++;
-        scopeStack.push(currentScopeId);
-        scopeTables.put(currentScopeId, new SymbolTable());
-    }
-
-    public void closeScope() {
-        scopeStack.pop();
-    }
-
-    public SymbolTable getCurrentScope() {
-        return scopeTables.get(scopeStack.peek());
-    }
-
-    public int getCurrentScopeId() {
-        return scopeStack.peek();
-    }
-
-    public boolean symbolExistsInCurrentScope(String name) {
-        return getCurrentScope().contains(name);
+    
+        Element symbElement = (Element) ((Element) currentNode).getElementsByTagName("SYMB").item(0);
+        Element childrenElement = (Element) ((Element) currentNode).getElementsByTagName("CHILDREN").item(0);
+    
+        if (symbElement != null) {
+            String symb = symbElement.getTextContent();
+            System.out.println("Symbol: " + symb);
+        }
+    
+        if (childrenElement == null) {
+            System.out.println("No children element found.");
+            return;
+        }
+    
+        NodeList children = childrenElement.getChildNodes();
+        if (children.getLength() == 0) {
+            System.out.println("No children of node");
+            return;
+        }
+    
+        // Traverse children
+        List<String> childrenIDs = new ArrayList<>();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node childNode = children.item(i);
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) childNode;
+                childrenIDs.add(childElement.getTextContent());
+                System.out.println("Child ID: " + childElement.getTextContent());
+            }
+        }
+    
+        for (String childID : childrenIDs) {
+            Element child = (Element) getNodeByUNID(childID);
+            if (child != null) {
+                System.out.println("Traversing Child: " + child.getElementsByTagName("UNID").item(0).getTextContent());
+                traverseTree(child);
+            }
+        }
     }
     
-    public boolean symbolExistsInAncestorScopes(String name) {
-        for (int scopeId : scopeStack) {
-            if (scopeTables.get(scopeId).contains(name)) {
-                return true;
+    
+
+    public Node getNodeByUNID(String unid) {
+        // Search in inner nodes
+        for (int i = 0; i < innerNodes.getLength(); i++) {
+            Element node = (Element) innerNodes.item(i);
+            if (unid.equals(node.getElementsByTagName("UNID").item(0).getTextContent())) {
+                return node;
             }
         }
-        return false;
-    }
 
-    public void printSymbolTable() {
-        System.out.println("\n--- Symbol Table ---");
-        for (Map.Entry<Integer, SymbolTable> entry : scopeTables.entrySet()) {
-            int scopeId = entry.getKey();
-            SymbolTable table = entry.getValue();
-            System.out.println("Scope ID: " + scopeId);
-            
-            // Use the getter method to access the symbol map
-            for (Map.Entry<String, Symbol> symbolEntry : table.getSymbols().entrySet()) {
-                Symbol symbol = symbolEntry.getValue();
-                System.out.println("  Symbol Name: " + symbol.getName() + ", Type: " + symbol.getType() + ", Scope ID: " + symbol.getScopeId());
+        // Search in leaf nodes
+        for (int i = 0; i < leafNodes.getLength(); i++) {
+            Element node = (Element) leafNodes.item(i);  // Fixed from innerNodes to leafNodes
+            if (unid.equals(node.getElementsByTagName("UNID").item(0).getTextContent())) {
+                return node;
             }
         }
-        System.out.println("--------------------");
+
+        return null;  // Return null if no matching node is found
     }
 
-    public void addSymbolToCurrentScope(String name, Symbol symbol) throws Exception {
-        getCurrentScope().addSymbol(name, symbol);
-    }
-}
-
-
-class ScopeAnalyzer {
-    private ScopeManager scopeManager;
-
-    public ScopeAnalyzer() {
-        scopeManager = new ScopeManager();
-    }
-
-    public ScopeManager getScopeManager() {
-        return scopeManager;
-    }
-
-    public void analyze(String filePath) throws Exception {
+    public void getNodes(String filePath) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(filePath);
-        Element root = document.getDocumentElement();
-        
-        traverseSyntaxTree(root);
-    }
+        DocumentBuilder builder;
+        Document doc = null;
 
-    private void traverseSyntaxTree(Node node) throws Exception {
-        String nodeName = node.getNodeName();
-
-        if (nodeName.equals("PROG") || nodeName.equals("FUNCTIONS")) {
-            handleFunctionScope(node);
-        } else if (nodeName.equals("VNAME")) {
-            handleVariableDeclaration(node);
-        } else if (nodeName.equals("CALL")) {
-            handleFunctionCall(node);
+        try {
+            builder = factory.newDocumentBuilder();
+            doc = builder.parse(filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        NodeList children = node.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            traverseSyntaxTree(children.item(i));
-        }
-    }
+        root = doc.getDocumentElement().getElementsByTagName("ROOT").item(0);
 
-    private void handleFunctionScope(Node node) throws Exception {
-        scopeManager.openScope();
-        
-        String functionName = getChildNodeValue(node, "FNAME");
-        if (scopeManager.symbolExistsInCurrentScope(functionName)) {
-            throw new Exception("Function " + functionName + " already declared in the current scope.");
-        }
-        Symbol functionSymbol = new Symbol(functionName, "function", scopeManager.getCurrentScopeId());
-        scopeManager.addSymbolToCurrentScope(functionName, functionSymbol);
+        innerNodes = doc.getDocumentElement().getElementsByTagName("IN");
 
-        scopeManager.closeScope();
-    }
-
-    private void handleVariableDeclaration(Node node) throws Exception {
-        String variableName = getChildNodeValue(node, "VNAME");
-        if (scopeManager.symbolExistsInCurrentScope(variableName)) {
-            throw new Exception("Variable " + variableName + " already declared in this scope.");
-        }
-        Symbol variableSymbol = new Symbol(variableName, "variable", scopeManager.getCurrentScopeId());
-        scopeManager.addSymbolToCurrentScope(variableName, variableSymbol);
-    }
-
-    private void handleFunctionCall(Node node) throws Exception {
-        String functionName = getChildNodeValue(node, "FNAME");
-        if (!scopeManager.symbolExistsInAncestorScopes(functionName)) {
-            throw new Exception("Function " + functionName + " not declared.");
-        }
-        if (functionName.equals("main")) {
-            throw new Exception("Recursive call to main function is not allowed.");
-        }
-    }
-
-    private String getChildNodeValue(Node node, String childName) {
-        NodeList children = node.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            if (child.getNodeName().equals(childName)) {
-                return child.getTextContent();
-            }
-        }
-        return null;
+        leafNodes = doc.getDocumentElement().getElementsByTagName("LEAF");
     }
 }
