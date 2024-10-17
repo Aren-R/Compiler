@@ -143,75 +143,43 @@ public class ScopeAnalyser {
     }
 
     private void handleVariableDeclaration(Node currentNode) {
-        // Extract the variable name as usual
-        String varName = extractNodeTextContent(currentNode);
-    
-        // Get the unique UNID for this node (the leaf node's UNID, not the parent)
-        int nodeId = Integer.parseInt(((Element) currentNode).getElementsByTagName("UNID").item(0).getTextContent());
-    
-        // Get the variable type from the preceding sibling (VTYP)
-        String varType = extractTypeFromPrecedingVTYP(currentNode);
-    
+        NodeInfo variableNode = extractNodeTextContent(currentNode);
         Scope currentScope = scopeStack.peek();
-    
-        SymbolInfo varInfo = new SymbolInfo(varType, nodeId);
-        if (!currentScope.addVariable(varName, varInfo)) {
-            throw new RuntimeException("Duplicate variable declaration: " + varName);
-        }
-    
-        System.out.println("Variable declared: " + varName + " (Type: " + varType + ", ID: " + nodeId + ")");
-    }
 
-    private String extractTypeFromPrecedingVTYP(Node currentNode) {
-        // Assuming currentNode is a VNAME node, traverse to its previous sibling
-        Node previousSibling = currentNode.getPreviousSibling();
-        
-        // Traverse backward to find the preceding VTYP element
-        while (previousSibling != null && !"VTYP".equals(previousSibling.getNodeName())) {
-            previousSibling = previousSibling.getPreviousSibling();
+        SymbolInfo varInfo = new SymbolInfo("variable", Integer.parseInt(variableNode.unid));
+        if (!currentScope.addVariable(variableNode.word, varInfo)) {
+            throw new RuntimeException("Duplicate variable declaration: " + variableNode.word);
         }
-    
-        if (previousSibling != null) {
-            // Now extract the word from the preceding VTYP element
-            Element vtypElement = (Element) previousSibling;
-            Node wordNode = vtypElement.getElementsByTagName("WORD").item(0);
-            if (wordNode != null) {
-                return wordNode.getTextContent();  // Return the type, e.g., 'num', 'str', etc.
-            }
-        }
-    
-        return "unknown";  // Fallback if VTYP not found
+
+        // System.out.println("Variable declared: " + variableNode.word + " (ID: " + variableNode.unid + ")");
     }
-    
-    
 
     private void handleFunctionDeclaration(Node currentNode) {
-        String funcName = extractNodeTextContent(currentNode);
-        int nodeId = Integer.parseInt(((Element) currentNode).getElementsByTagName("UNID").item(0).getTextContent());
+       NodeInfo fun = extractNodeTextContent(currentNode);
         Scope currentScope = scopeStack.peek();
 
         // Create new scope for the function
         Scope funcScope = new Scope(currentScope);
         scopeStack.push(funcScope);
 
-        SymbolInfo funcInfo = new SymbolInfo("function", nodeId);
-        if (!currentScope.addFunction(funcName, funcInfo)) {
-            throw new RuntimeException("Duplicate function declaration: " + funcName);
+        SymbolInfo funcInfo = new SymbolInfo("function", Integer.parseInt(fun.unid));
+        if (!currentScope.addFunction(fun.word, funcInfo)) {
+            throw new RuntimeException("Duplicate function declaration: " + fun.word);
         }
 
-        System.out.println("Function declared: " + funcName + " (ID: " + nodeId + ")");
+        // System.out.println("Function declared: " + fun.word + " (ID: " + Integer.parseInt(fun.unid) + ")");
     }
 
     private void handleFunctionCall(Node currentNode) {
-        String funcName = extractNodeTextContent(currentNode);
+        NodeInfo fun = extractNodeTextContent(currentNode);
         Scope currentScope = scopeStack.peek();
 
-        SymbolInfo funcInfo = currentScope.lookupFunction(funcName);
+        SymbolInfo funcInfo = currentScope.lookupFunction(fun.word);
         if (funcInfo == null) {
-            throw new RuntimeException("Function not found: " + funcName);
+            throw new RuntimeException("Function not found: " + fun.word);
         }
 
-        System.out.println("Function call: " + funcName);
+        System.out.println("Function call: " + fun.word);
     }
 
     private void handleLeafNode(Node currentNode) {
@@ -220,23 +188,39 @@ public class ScopeAnalyser {
         // System.out.println("Leaf Node Content: " + leafContent);
     }
 
-    private String extractNodeTextContent(Node node) {
-
+    private NodeInfo extractNodeTextContent(Node node) {
+        // Get the CHILDREN element from the node
         Node childElement = ((Element) node).getElementsByTagName("CHILDREN").item(0);
-
+    
+        // Get the ID of the child element
         String childID = ((Element) childElement).getElementsByTagName("ID").item(0).getTextContent();
-
+    
+        // Get the child node using the UNID
         Element child = (Element) getNodeByUNID(childID);
     
+        // Extract the WORD node text
         Node wordNode = child.getElementsByTagName("WORD").item(0);
-    
+        
         if (wordNode != null) {
-            return wordNode.getTextContent();
+            String wordText = wordNode.getTextContent();
+            // Return both the WORD and UNID in a NodeInfo object
+            return new NodeInfo(wordText, childID);
         } else {
             System.out.println("Warning: WORD node not found in child with ID " + childID);
-            return "";
+            return new NodeInfo("", childID);
         }
     }
+    
+    public class NodeInfo {
+        public String word;
+        public String unid;
+    
+        public NodeInfo(String word, String unid) {
+            this.word = word;
+            this.unid = unid;
+        }
+    }
+    
     
 
     public Node getNodeByUNID(String unid) {
