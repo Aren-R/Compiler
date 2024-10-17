@@ -11,6 +11,7 @@ public class ScopeAnalyser {
     public ScopeAnalyser() {
         SyntaxTree syntaxTree = new SyntaxTree();
         this.root = syntaxTree.root;
+        // syntaxTree.printTree();
         bannedVariables = new ArrayList<>(Arrays.asList(
             "mul", "main", "grt", "div", "void", "print", "return",
             ",", ";", "=", "(", ")", "{", "}", "num", "not",
@@ -89,15 +90,15 @@ public class ScopeAnalyser {
     }
 
     public void printScopeStack() {
-        System.out.println("Current Scope Stack:");
+        // System.out.println("Current Scope Stack:");
         for (Scope scope : scopeStack) {
-            System.out.println("Scope ID: " + scope.id);
+            // System.out.println("Scope ID: " + scope.id);
             printSymbolTable(scope.symbolTable);
         }
     }
     
     public void printSymbolTable(Scope.SymbolTable symbolTable) {
-        System.out.println("Symbol Table:");
+        // System.out.println("Symbol Table:");
         for (Map.Entry<String, Scope.SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
             String symbol = entry.getKey();
             Scope.SymbolTable.SymbolInfo info = entry.getValue();
@@ -182,10 +183,7 @@ public class ScopeAnalyser {
     }
 
     public void handleHeader(TreeNode node) {
-        TreeNode FTYP = node.children.get(0);
         TreeNode FNAME = node.children.get(1);
-
-        String type = FTYP.children.get(0).symbol;
         String name = FNAME.children.get(0).symbol;
 
         try {
