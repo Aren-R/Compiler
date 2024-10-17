@@ -6,9 +6,9 @@ class SyntaxTree {
     public TreeNode root;
     public Map<String, TreeNode> nodeMap; // To map UNIDs to nodes for quick access
 
-    public SyntaxTree(String xmlFilePath) {
+    public SyntaxTree() {
         nodeMap = new HashMap<>();
-        buildTree(xmlFilePath);
+        buildTree("resources/SyntaxTree.xml");
     }
 
     // Build the syntax tree from XML

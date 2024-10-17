@@ -32,7 +32,7 @@ public class Parser {
         initializeSyntaxTree();
     }
 
-    public void parse() throws Exception {
+    public void run() throws Exception {
         stack.push(new TokenNode(0, "na", "PROG"));
 
         NodeList tokens = tokenStream.getElementsByTagName("TOK");
@@ -87,6 +87,7 @@ public class Parser {
 
                 assignParents();
                 writeSyntaxTreeToFile("resources/syntaxTree.xml");
+                System.out.println("\nParsing Completed\n");
                 break;
             }
             

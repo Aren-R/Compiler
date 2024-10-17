@@ -8,18 +8,20 @@ public class ScopeAnalyser {
     public Stack<Scope> scopeStack = new Stack<>();
     public List<String> bannedVariables;
     
-    public ScopeAnalyser(TreeNode root) {
+    public ScopeAnalyser() {
+        SyntaxTree syntaxTree = new SyntaxTree();
+        this.root = syntaxTree.root;
         bannedVariables = new ArrayList<>(Arrays.asList(
             "mul", "main", "grt", "div", "void", "print", "return",
             ",", ";", "=", "(", ")", "{", "}", "num", "not",
             "text", "then", "begin", "end", "else", "eq", "sqrt",
             "sub", "skip", "halt", "if", "or", "and", "add", "<input"));
-        this.root = root;
     }
 
-    public void analyse() {
+    public void run() {
         scopeStack.push(new Scope(null));
         traverseTree(root);
+        printScopeStack();
     }
 
     public void traverseTree(TreeNode node) {
@@ -54,9 +56,24 @@ public class ScopeAnalyser {
                 break;
             }
 
+            case "PROG": {
+                traverseTree(node.children.get(1));
+                traverseTree(node.children.get(3));
+                traverseTree(node.children.get(2));
+                break;
+            }
+
             case "DECL": {
+                TreeNode FTYP = node.children.get(0).children.get(0);
+                TreeNode FNAME = node.children.get(0).children.get(1);
+        
+                String type = FTYP.children.get(0).symbol;
+                String name = FNAME.children.get(0).symbol;
+                String ID = FNAME.children.get(0).id;
+                scopeStack.peek().symbolTable.addSymbol(name, type, ID);
+
                 scopeStack.push(new Scope(scopeStack.peek()));
-                printScopeStack();
+                // printScopeStack();
                 handleHeader(node.children.get(0));
                 traverseTree(node.children.get(1));
                 break;
@@ -84,7 +101,7 @@ public class ScopeAnalyser {
         for (Map.Entry<String, Scope.SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
             String symbol = entry.getKey();
             Scope.SymbolTable.SymbolInfo info = entry.getValue();
-            System.out.println("[Symbol: " + symbol + ", type: " + info.type + ", unique name: " + info.newName+"]");
+            System.out.println("[ID " + info.id + " | Symbol: " + symbol + " | Type: " + info.type + " | Unique Name: " + info.newName+"]");
         }
         System.out.println();
     }
@@ -98,7 +115,8 @@ public class ScopeAnalyser {
         TreeNode VNAME = node.children.get(1);
         String type = VTYP.children.get(0).symbol;
         String name = VNAME.children.get(0).symbol;
-        scopeStack.peek().symbolTable.addSymbol(name, type);
+        String ID = VNAME.children.get(0).id;
+        scopeStack.peek().symbolTable.addSymbol(name, type, ID);
 
         handleGlobVars(node.children.get(3));
     }
@@ -131,6 +149,8 @@ public class ScopeAnalyser {
             System.out.println(e.getMessage());
             System.exit(1);
         }
+
+        traverseTree(node.children.get(2));
     }
 
     public void handleLocVars(TreeNode node) {
@@ -146,16 +166,19 @@ public class ScopeAnalyser {
 
         String type1 = VTYP1.children.get(0).symbol;
         String name1 = VNAME1.children.get(0).symbol;
+        String ID1 = VNAME1.children.get(0).id;
 
         String type2 = VTYP2.children.get(0).symbol;
         String name2 = VNAME2.children.get(0).symbol;
+        String ID2 = VNAME2.children.get(0).id;
 
         String type3 = VTYP3.children.get(0).symbol;
         String name3 = VNAME3.children.get(0).symbol;
+        String ID3 = VNAME3.children.get(0).id;
 
-        scopeStack.peek().symbolTable.addSymbol(name1, type1);
-        scopeStack.peek().symbolTable.addSymbol(name2, type2);
-        scopeStack.peek().symbolTable.addSymbol(name3, type3);
+        scopeStack.peek().symbolTable.addSymbol(name1, type1, ID1);
+        scopeStack.peek().symbolTable.addSymbol(name2, type2, ID2);
+        scopeStack.peek().symbolTable.addSymbol(name3, type3, ID3);
     }
 
     public void handleHeader(TreeNode node) {
@@ -165,7 +188,13 @@ public class ScopeAnalyser {
         String type = FTYP.children.get(0).symbol;
         String name = FNAME.children.get(0).symbol;
 
-        scopeStack.peek().symbolTable.addSymbol(name, type);
+        try {
+            scopeStack.peek().lookup(name);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+
 
         TreeNode VNAME1 = node.children.get(3);
         TreeNode VNAME2 = node.children.get(5);
@@ -175,16 +204,19 @@ public class ScopeAnalyser {
         String name2 = VNAME2.children.get(0).symbol;
         String name3 = VNAME3.children.get(0).symbol;
 
-        scopeStack.peek().symbolTable.addSymbol(name1, "num");
-        scopeStack.peek().symbolTable.addSymbol(name2, "num");
-        scopeStack.peek().symbolTable.addSymbol(name3, "num");
+        String ID1 = VNAME1.children.get(0).id;
+        String ID2 = VNAME2.children.get(0).id;
+        String ID3 = VNAME3.children.get(0).id;
+
+        scopeStack.peek().symbolTable.addSymbol(name1, "num", ID1);
+        scopeStack.peek().symbolTable.addSymbol(name2, "num", ID2);
+        scopeStack.peek().symbolTable.addSymbol(name3, "num", ID3);
 
     }
 
     public void handleCall(TreeNode node) {
         TreeNode FNAME = node.children.get(0);
         String name = FNAME.children.get(0).symbol;
-        System.out.println(name);
 
         try {
             scopeStack.peek().lookup(name);
@@ -211,12 +243,13 @@ public class ScopeAnalyser {
 
         public String lookup(String name) throws Exception {
 
-            if (name.startsWith("F")) {
-                if (this.symbolTable.table.containsKey(name)) {
-                    return this.symbolTable.table.get(name).newName;
-                }
-                throw new Exception("Function " + name + " not declared");
-            } else {
+            // if (name.startsWith("F")) {
+            //     if (this.symbolTable.table.containsKey(name)) {
+            //         return this.symbolTable.table.get(name).newName;
+            //     }
+            //     throw new Exception("Function " + name + " not declared");
+            // } else {
+
                 Scope currentScope = this;
                 while (currentScope != null) {
                     if (currentScope.symbolTable.table.containsKey(name)) {
@@ -224,8 +257,11 @@ public class ScopeAnalyser {
                     }
                     currentScope = currentScope.parent;
                 }
+                if (name.startsWith("F")) {
+                    throw new Exception("Function " + name + " not declared");
+                }
                 throw new Exception("Variable " + name + " not declared");
-            }
+            // }
         }
 
         public class SymbolTable {
@@ -235,13 +271,13 @@ public class ScopeAnalyser {
                 table = new HashMap<>();
             }
 
-            public void addSymbol(String name, String type) {
+            public void addSymbol(String name, String type, String id) {
                 if (name.startsWith("F")) {
                     if (table.containsKey(name)) {
                         System.out.println("Error: Double decleration of function " + name);
                         System.exit(1);
                     }
-                    table.put(name, new SymbolInfo(name, type));
+                    table.put(name, new SymbolInfo(name, type, id));
                     return;
                 }
 
@@ -256,20 +292,23 @@ public class ScopeAnalyser {
                     System.exit(1);
                 }
 
-                table.put(name, new SymbolInfo(name, type));
+                table.put(name, new SymbolInfo(name, type, id));
             }
             
             public class SymbolInfo {
                 public String type;
                 public String newName;
+                public String id;
                 
-                public SymbolInfo(String name, String type) {
+                public SymbolInfo(String name, String type, String id) {
                     if (name.startsWith("F")) {
                         this.type = type;
                         this.newName = "func_" + uniqueFunctionCounter++;
+                        this.id = id;
                     } else {
                         this.type = type;
                         this.newName = "var_" + uniqueIDCounter++;
+                        this.id = id;
                     }
 
                 }

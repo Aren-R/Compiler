@@ -33,7 +33,7 @@ public class Lexer{
     }
 
     // Run the lexer
-    public String runLexer() throws InvalidTokenException {
+    public String run() throws InvalidTokenException {
         String tokenisedInputStream = "<TOKENSTREAM>\n";
         Integer indexOfInput = 0;
         Token token = new Token();
