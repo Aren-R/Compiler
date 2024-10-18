@@ -1,13 +1,16 @@
 main
-num V_a , text V_msg , num V_y ,
+num V_x , text V_msg , num V_y ,
 begin
-    V_a = add ( 5 , 3 ) ;
+    V_x = add ( 5 , 3 ) ;
     V_msg = "Hello" ;
-    V_a = F_compute ( V_a , 2 , 3 ) ;
+    V_x = F_compute ( V_x , 2 , 3 ) ;
+    V_x = F_compute ( V_x , V_x , 3 ) ;
+    V_x = F_compute ( V_x , 4 , V_y ) ;
+    V_x = F_compute ( 1 , 2 , V_y ) ;
     return V_msg ;
-    if eq ( V_a , 8 ) then
+    if eq ( V_x , 8 ) then
         begin
-            V_y = mul ( V_a , 2 ) ;
+            V_y = mul ( V_x , 2 ) ;
         end
     else
         begin

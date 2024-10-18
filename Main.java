@@ -3,20 +3,23 @@ public class Main {
         try {
 
 
+            //Lexing
             Lexer lexer = new Lexer();
             String resultOfLexer = lexer.run();
-            System.out.println("\nLexing Completed\n");
 
 
+            //Parsing
             Parser parser = new Parser();
             parser.setTokenStream(resultOfLexer);
             parser.run();
 
-            
-            ScopeAnalyser ScopeAnalyser = new ScopeAnalyser();
-            ScopeAnalyser.run();
-            System.out.println("\nScope Analysis Completed\n");
+            //Scope Analysis
+            SyntaxTree syntaxTree = new SyntaxTree();
+            SemanticAnalyser SemanticAnalyser = new SemanticAnalyser(syntaxTree.root);
+            SemanticAnalyser.runScopeAnalyser();
 
+            //Type Checking
+            // SemanticAnalyser.runTypeChecker();
 
 
         } catch (Exception e) {

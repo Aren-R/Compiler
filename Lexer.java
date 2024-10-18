@@ -94,12 +94,14 @@ public class Lexer{
         tokenisedInputStream += "</TOKENSTREAM>\n";
 
         // Save to XML
+
         try (FileWriter fileWriter = new FileWriter("resources/tokens.xml")) {
             fileWriter.write(tokenisedInputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
+        System.out.println("\nLexing Completed\n");
         return tokenisedInputStream;
     }
 

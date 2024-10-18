@@ -9,6 +9,7 @@ class SyntaxTree {
     public SyntaxTree() {
         nodeMap = new HashMap<>();
         buildTree("resources/SyntaxTree.xml");
+        // printTree();
     }
 
     // Build the syntax tree from XML

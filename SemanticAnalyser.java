@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class ScopeAnalyser {
+public class SemanticAnalyser {
     public TreeNode root;
     public static int uniqueIDCounter = 0;
     public static int uniqueFunctionCounter = 0;
@@ -8,7 +8,7 @@ public class ScopeAnalyser {
     public Stack<Scope> scopeStack = new Stack<>();
     public List<String> bannedVariables;
     
-    public ScopeAnalyser() {
+    public SemanticAnalyser(TreeNode root) {
         SyntaxTree syntaxTree = new SyntaxTree();
         this.root = syntaxTree.root;
         // syntaxTree.printTree();
@@ -19,10 +19,16 @@ public class ScopeAnalyser {
             "sub", "skip", "halt", "if", "or", "and", "add", "<input"));
     }
 
-    public void run() {
+    public void runScopeAnalyser() {
         scopeStack.push(new Scope(null));
         traverseTree(root);
         printScopeStack();
+        System.out.println("Scope Analysis Completed");
+    }
+
+    public void runTypeChecker() {
+        TypeChecker typeChecker = new TypeChecker(root);
+        typeChecker.run();
     }
 
     public void traverseTree(TreeNode node) {
@@ -262,6 +268,17 @@ public class ScopeAnalyser {
             // }
         }
 
+        public String lookupType(String name) throws Exception {
+            Scope currentScope = this;
+            while (currentScope != null) {
+                if (currentScope.symbolTable.table.containsKey(name)) {
+                    return currentScope.symbolTable.table.get(name).type;
+                }
+                currentScope = currentScope.parent;
+            }
+            throw new Exception("Type not found");
+        }
+
         public class SymbolTable {
             public HashMap<String, SymbolInfo> table;
             
@@ -313,4 +330,85 @@ public class ScopeAnalyser {
             }
         }
     }
+
+    //=======================================================================================================
+    //=======================================================================================================
+    //TYPE CHECKER
+
+    public class TypeChecker {
+        private TreeNode root;
+        public Stack<Scope> scopeStack;
+    
+        public TypeChecker(TreeNode root) {
+            this.root = root;
+        }
+    
+        public boolean run() {
+            return typecheck(root);
+        }
+    
+        public boolean typecheck(TreeNode node) {
+            switch (node.symbol) {
+                case "PROG": {
+                    return typecheck(node.children.get(1)) && typecheck(node.children.get(2)) && typecheck(node.children.get(3));
+                }
+    
+                case "GLOBVARS": {
+                    return handleGlobVars(node);
+                }
+            
+                default: {
+                    break;
+                }
+            }
+    
+            return false;
+        }
+    
+        public boolean handleGlobVars(TreeNode node) {
+            if (node.children.size() == 0) {
+                return true;
+            }
+
+            TreeNode VTYP = node.children.get(0);
+            TreeNode VNAME = node.children.get(1);
+            TreeNode GLOBVARS = node.children.get(3);
+
+            String VTYPtype = typeOf(VTYP);
+            String VNAMEtype = typeOf(VNAME);
+            return VTYPtype.equals(VNAMEtype) && typecheck(GLOBVARS);
+        }
+    
+        public String typeOf(TreeNode node) {
+            switch (node.symbol) {
+                case "VTYP": {
+                    try {
+                        String type = node.children.get(0).symbol;
+                        return type;
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        System.exit(1);
+                    }
+                }
+    
+                case "VNAME": {
+                    try {
+                        String type = scopeStack.peek().lookupType(node.children.get(0).symbol);
+                        return type;
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        System.exit(1);
+                    }
+                }
+    
+                default: {
+                    return "type not found";
+                }
+            }
+        }
+    }
+
+    //=======================================================================================================
+    //=======================================================================================================
+    
 }
