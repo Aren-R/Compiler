@@ -48,6 +48,23 @@ class SyntaxTree {
         }
     }
 
+    public void renameTree(HashMap<String, ScopeAnalyser.SymbolTable.SymbolInfo> symbolTable) {
+        renameNode(root, symbolTable);
+    }
+
+    // Recursive method to rename each node with the corresponding symbol from the symbol table
+    private void renameNode(TreeNode node, HashMap<String, ScopeAnalyser.SymbolTable.SymbolInfo> symbolTable) {
+
+        if (symbolTable.containsKey(node.id)) {
+            System.out.println("Renaming " + node.symbol + " to " + symbolTable.get(node.id).newName);
+            node.symbol = symbolTable.get(node.id).newName;
+        }
+
+        for (TreeNode child : node.getChildren()) {
+            renameNode(child, symbolTable);
+        }
+    }
+
     // Process a general node (either root or inner node)
     public TreeNode processNode(Element nodeElement) {
         String id = nodeElement.getElementsByTagName("UNID").item(0).getTextContent();
@@ -108,6 +125,7 @@ class SyntaxTree {
 
 
     public void printTree() {
+        
         printNode(root, 0);
     }
 
@@ -160,7 +178,7 @@ class TreeNode {
     @Override
     public String toString() {
         if (tokenId != null && tokenClass != null) {
-            return "Leaf [ID=" + id + ", Symbol=" + symbol + ", TokenID=" + tokenId + ", TokenClass=" + tokenClass + ", Parent=" + parent.symbol + "]";
+            return "Leaf [ID=" + id + ", Symbol=" + symbol + ", TokenClass=" + tokenClass + ", Parent=" + parent.symbol + "]";
         }
         return "Node [ID=" + id + ", Symbol=" + symbol + "]";
     }

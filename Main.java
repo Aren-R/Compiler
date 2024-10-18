@@ -15,11 +15,11 @@ public class Main {
 
             //Scope Analysis
             SyntaxTree syntaxTree = new SyntaxTree();
-            SemanticAnalyser SemanticAnalyser = new SemanticAnalyser(syntaxTree.root);
-            SemanticAnalyser.runScopeAnalyser();
+            ScopeAnalyser scopeAnalyser = new ScopeAnalyser(syntaxTree.root);
+            scopeAnalyser.runScopeAnalyser();
 
             //Type Checking
-            // SemanticAnalyser.runTypeChecker();
+            // ScopeAnalyser.runTypeChecker();
 
 
         } catch (Exception e) {

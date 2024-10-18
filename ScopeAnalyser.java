@@ -1,15 +1,16 @@
 import java.util.*;
 
-public class SemanticAnalyser {
+public class ScopeAnalyser {
     public TreeNode root;
     public static int uniqueIDCounter = 0;
     public static int uniqueFunctionCounter = 0;
     public static int uniqueScopeCounter = 0;
     public Stack<Scope> scopeStack = new Stack<>();
     public List<String> bannedVariables;
+    SyntaxTree syntaxTree = new SyntaxTree();
+    public HashMap<String, SymbolTable.SymbolInfo> symbolTable = new HashMap<>();
     
-    public SemanticAnalyser(TreeNode root) {
-        SyntaxTree syntaxTree = new SyntaxTree();
+    public ScopeAnalyser(TreeNode root) {
         this.root = syntaxTree.root;
         // syntaxTree.printTree();
         bannedVariables = new ArrayList<>(Arrays.asList(
@@ -22,8 +23,12 @@ public class SemanticAnalyser {
     public void runScopeAnalyser() {
         scopeStack.push(new Scope(null));
         traverseTree(root);
-        printScopeStack();
+        // printScopeStack();
+        createVTable();
+        printVTable();
         System.out.println("Scope Analysis Completed");
+        // syntaxTree.renameTree(symbolTable);
+        // syntaxTree.printTree();
     }
 
     public void runTypeChecker() {
@@ -103,15 +108,36 @@ public class SemanticAnalyser {
         }
     }
     
-    public void printSymbolTable(Scope.SymbolTable symbolTable) {
+    public void printSymbolTable(SymbolTable symbolTable) {
         // System.out.println("Symbol Table:");
-        for (Map.Entry<String, Scope.SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
+        for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
             String symbol = entry.getKey();
-            Scope.SymbolTable.SymbolInfo info = entry.getValue();
-            System.out.println("[ID " + info.id + " | Symbol: " + symbol + " | Type: " + info.type + " | Unique Name: " + info.newName+"]");
+            SymbolTable.SymbolInfo info = entry.getValue();
+            System.out.println("[ID " + info.id + " | Symbol: " + symbol +" | Old Name "+ info.oldName +" | Type: " + info.type + " | Unique Name: " + info.newName+"]");
         }
         System.out.println();
     }
+
+    public void createVTable() {
+        for (Scope scope : scopeStack) {
+            for (Map.Entry<String, SymbolTable.SymbolInfo> entry : scope.symbolTable.table.entrySet()) {
+                SymbolTable.SymbolInfo info = entry.getValue();
+                symbolTable.put(info.id, info);
+            }
+        }
+    }
+
+    public void printVTable() {
+        for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
+            String symbol = entry.getKey();
+            SymbolTable.SymbolInfo info = entry.getValue();
+            System.out.println("[ID " + info.id + " | NewName: " + info.newName +" | OldName: "+ info.oldName +" | Type: " + info.type + "]");
+        }
+    }
+
+    // public void renameSyntaxTree {
+
+    // }
 
     public void handleGlobVars(TreeNode node) {
         if (node.children.size() == 0) {
@@ -278,137 +304,60 @@ public class SemanticAnalyser {
             }
             throw new Exception("Type not found");
         }
+    }
 
-        public class SymbolTable {
-            public HashMap<String, SymbolInfo> table;
-            
-            public SymbolTable() {
-                table = new HashMap<>();
-            }
+    public class SymbolTable {
+        public HashMap<String, SymbolInfo> table;
+        
+        public SymbolTable() {
+            table = new HashMap<>();
+        }
 
-            public void addSymbol(String name, String type, String id) {
-                if (name.startsWith("F")) {
-                    if (table.containsKey(name)) {
-                        System.out.println("Error: Double decleration of function " + name);
-                        System.exit(1);
-                    }
-                    table.put(name, new SymbolInfo(name, type, id));
-                    return;
-                }
-
-
-                if (bannedVariables.contains(name.substring(2))) {
-                    System.out.println("Error: Variable name " + name + " is reserved");
-                    System.exit(1);
-                }
-
+        public void addSymbol(String name, String type, String id) {
+            if (name.startsWith("F")) {
                 if (table.containsKey(name)) {
-                    System.out.println("Error: Double decleration of variable " + name);
+                    System.out.println("Error: Double decleration of function " + name);
                     System.exit(1);
                 }
-
                 table.put(name, new SymbolInfo(name, type, id));
+                return;
             }
-            
-            public class SymbolInfo {
-                public String type;
-                public String newName;
-                public String id;
-                
-                public SymbolInfo(String name, String type, String id) {
-                    if (name.startsWith("F")) {
-                        this.type = type;
-                        this.newName = "func_" + uniqueFunctionCounter++;
-                        this.id = id;
-                    } else {
-                        this.type = type;
-                        this.newName = "var_" + uniqueIDCounter++;
-                        this.id = id;
-                    }
 
-                }
+
+            if (bannedVariables.contains(name.substring(2))) {
+                System.out.println("Error: Variable name " + name + " is reserved");
+                System.exit(1);
             }
+
+            if (table.containsKey(name)) {
+                System.out.println("Error: Double decleration of variable " + name);
+                System.exit(1);
+            }
+
+            table.put(name, new SymbolInfo(name, type, id));
+        }
+        
+        public class SymbolInfo {
+            public String type;
+            public String newName;
+            public String id;
+            public String oldName;
+
+            public SymbolInfo(String name, String type, String id) {
+                if (name.startsWith("F")) {
+                    this.type = type;
+                    this.newName = "func_" + uniqueFunctionCounter++;
+                    this.id = id;
+                    this.oldName = name;
+                } else {
+                    this.type = type;
+                    this.newName = "var_" + uniqueIDCounter++;
+                    this.id = id;
+                    this.oldName = name;
+                }
+
+            }
+
         }
     }
-
-    //=======================================================================================================
-    //=======================================================================================================
-    //TYPE CHECKER
-
-    public class TypeChecker {
-        private TreeNode root;
-        public Stack<Scope> scopeStack;
-    
-        public TypeChecker(TreeNode root) {
-            this.root = root;
-        }
-    
-        public boolean run() {
-            return typecheck(root);
-        }
-    
-        public boolean typecheck(TreeNode node) {
-            switch (node.symbol) {
-                case "PROG": {
-                    return typecheck(node.children.get(1)) && typecheck(node.children.get(2)) && typecheck(node.children.get(3));
-                }
-    
-                case "GLOBVARS": {
-                    return handleGlobVars(node);
-                }
-            
-                default: {
-                    break;
-                }
-            }
-    
-            return false;
-        }
-    
-        public boolean handleGlobVars(TreeNode node) {
-            if (node.children.size() == 0) {
-                return true;
-            }
-
-            TreeNode VTYP = node.children.get(0);
-            TreeNode VNAME = node.children.get(1);
-            TreeNode GLOBVARS = node.children.get(3);
-
-            String VTYPtype = typeOf(VTYP);
-            String VNAMEtype = typeOf(VNAME);
-            return VTYPtype.equals(VNAMEtype) && typecheck(GLOBVARS);
-        }
-    
-        public String typeOf(TreeNode node) {
-            switch (node.symbol) {
-                case "VTYP": {
-                    try {
-                        String type = node.children.get(0).symbol;
-                        return type;
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                        System.exit(1);
-                    }
-                }
-    
-                case "VNAME": {
-                    try {
-                        String type = scopeStack.peek().lookupType(node.children.get(0).symbol);
-                        return type;
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                        System.exit(1);
-                    }
-                }
-    
-                default: {
-                    return "type not found";
-                }
-            }
-        }
-    }
-
-    //=======================================================================================================
-    //=======================================================================================================
-    
 }
