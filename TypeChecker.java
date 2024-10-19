@@ -10,12 +10,12 @@ public class TypeChecker {
     }
 
     public void run() {
-        if(typecheck(root)) {
-            System.out.println("\nTypecheck Completed");
-            System.out.println("Typecheck Passed");
+
+        boolean result = typecheck(root);
+        if (result) {
+            System.out.println("Type checking successful");
         } else {
-            System.out.println("\nTypecheck Completed");
-            System.out.println("\nTypecheck Failed");
+            System.out.println("Type checking failed");
         }
     }
 
@@ -50,6 +50,7 @@ public class TypeChecker {
                     if (typeOf(node.children.get(1)).equals("num") || typeOf(node.children.get(1)).equals("text")) {
                         return true;
                     } else {
+                        System.out.println("Type Error: print statement type mismatch");
                         return false;
                     }
                 }
@@ -58,13 +59,13 @@ public class TypeChecker {
                     String FTYPofFunc = handleReturn(node);
                     // System.out.println(FTYPofFunc);
                     if (FTYPofFunc.equals("void")) {
-                        System.err.println("Error: 'return' statement in void function");
+                        System.err.println("Error: \"return\" statement in void function");
                         return false;
                     }
                     if (FTYPofFunc.equals(typeOf(node.children.get(1))) && typeOf(node.children.get(1)).equals("num")) {
                         return true;
                     } else {
-                        System.out.println("Error: 'return' statement type mismatch");
+                        System.out.println("Error: \"return\" statement type mismatch");
                         return false;
                     }
                 }
@@ -93,6 +94,7 @@ public class TypeChecker {
                     if (VNAMEtype.equals(TERMtype)) {
                         return true;
                     } else {
+                        System.out.println("Type Error: assignment type mismatch");
                         return false;
                     }
                 }
@@ -106,6 +108,7 @@ public class TypeChecker {
                 if (typeOf(node.children.get(1)).equals("bool")) {
                     return typecheck(node.children.get(3)) && typecheck(node.children.get(5));
                 } else {
+                    System.out.println("Type Error: condition in branch statement is not a boolean");
                     return false;
                 }
             }
@@ -129,6 +132,7 @@ public class TypeChecker {
                 if (t3.equals(t5) && t5.equals(t7) && t3.equals("num")) {
                     return true;
                 } else {
+                    System.out.println("Type Error: function arguments type mismatch");
                     return false;
                 }   
             }
