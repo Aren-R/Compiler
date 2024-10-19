@@ -16,10 +16,12 @@ public class Main {
             //Scope Analysis
             SyntaxTree syntaxTree = new SyntaxTree();
             ScopeAnalyser scopeAnalyser = new ScopeAnalyser(syntaxTree.root);
-            scopeAnalyser.runScopeAnalyser();
+            scopeAnalyser.run();
 
-            //Type Checking
-            // ScopeAnalyser.runTypeChecker();
+            // Type Checking
+            TypeChecker typeChecker = new TypeChecker(scopeAnalyser.root, scopeAnalyser.symbolTable);
+            typeChecker.run();
+
 
 
         } catch (Exception e) {

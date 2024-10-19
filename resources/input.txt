@@ -5,9 +5,8 @@ begin
     V_msg = "Hello" ;
     V_x = F_compute ( V_x , 2 , 3 ) ;
     V_x = F_compute ( V_x , V_x , 3 ) ;
-    V_x = F_compute ( V_x , 4 , V_y ) ;
+    V_x = F_compute ( V_x , 2 , V_y ) ;
     V_x = F_compute ( 1 , 2 , V_y ) ;
-    return V_msg ;
     if eq ( V_x , 8 ) then
         begin
             V_y = mul ( V_x , 2 ) ;
@@ -21,18 +20,18 @@ num F_compute ( V_a , V_b , V_c ) {
     num V_temp1 , text V_temp2 , num V_temp3 ,
     begin
         V_temp1 = add ( V_a , V_b ) ;
+        F_another ( 1 , 2 , 3 ) ;
         if grt ( V_temp1 , V_c ) then
             begin
-                print V_temp1 ;
+                return V_temp1 ;
             end
         else
             begin
-                print V_c ;
+                return V_c ;
             end ;
     end
 }
-end
-num F_another ( V_d , V_e , V_f ) {
+void F_another ( V_d , V_e , V_f ) {
     num V_sum , num V_product , text V_msg ,
     begin
         V_sum = add ( V_d , V_e ) ;
@@ -47,7 +46,7 @@ num F_another ( V_d , V_e , V_f ) {
                 V_msg = "Sumnot" ;
                 print V_msg ;
             end ;
-        return V_product ;
     end
 }
+end
 end
