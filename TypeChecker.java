@@ -11,9 +11,11 @@ public class TypeChecker {
 
     public void run() {
         if(typecheck(root)) {
-            System.out.println("\nTypecheck successful");
+            System.out.println("\nTypecheck Completed");
+            System.out.println("Typecheck Passed");
         } else {
-            System.out.println("\nTypecheck failed");
+            System.out.println("\nTypecheck Completed");
+            System.out.println("\nTypecheck Failed");
         }
     }
 

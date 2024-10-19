@@ -140,7 +140,7 @@ public class ScopeAnalyser {
     
         // Print each entry in the symbol table with consistent formatting
         for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
-            String symbol = entry.getKey();
+            // String symbol = entry.getKey();
             SymbolTable.SymbolInfo info = entry.getValue();
             
             // Format each line to ensure the columns are properly aligned

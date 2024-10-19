@@ -4855,7 +4855,7 @@
                     
                     <CLASS>reserved_word</CLASS>
                     
-                    <WORD>num</WORD>
+                    <WORD>text</WORD>
                     
                 </TOK>
             </TERMINAL>
