@@ -1,5 +1,5 @@
 main
-num V_x , text V_msg , num V_y , 
+num V_x , text V_msg , num V_y ,
 begin
     V_x = add ( 5 , 3 ) ;
     V_msg = "Hello" ;

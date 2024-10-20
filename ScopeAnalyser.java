@@ -12,6 +12,8 @@ public class ScopeAnalyser {
     public List<String> bannedVariables;
     SyntaxTree syntaxTree = new SyntaxTree();
     public HashMap<String, SymbolTable.SymbolInfo> symbolTable = new HashMap<>();
+    String RED = "\u001B[31m";
+    String RESET = "\u001B[0m";
 
     public ScopeAnalyser(TreeNode root) {
         this.root = syntaxTree.root;
@@ -87,8 +89,8 @@ public class ScopeAnalyser {
             }
 
             case "BODY": {
-                traverseTree(node.children.get(4));
                 traverseTree(node.children.get(1));
+                traverseTree(node.children.get(4));
                 traverseTree(node.children.get(2));
                 break;
             }
@@ -320,9 +322,9 @@ public class ScopeAnalyser {
                 currentScope = currentScope.parent;
             }
             if (name.startsWith("F")) {
-                throw new Exception("Function " + name + " not declared");
+                throw new Exception(RED + "Function " + name + " not declared" + RESET);
             }
-            throw new Exception("Variable " + name + " not declared");
+            throw new Exception(RED + "Variable " + name + " not declared" + RESET);
         }
         
     }
@@ -336,13 +338,13 @@ public class ScopeAnalyser {
 
         public String addSymbol(String name, String type, String id) {
             if (table.containsKey(name)) {
-                System.out.println("Error: Double declaration of variable " + name + " in the same scope");
+                System.out.println(RED + "Error: Double declaration of variable " + name + " in the same scope" + RESET);
                 System.exit(1);
             }
         
             // Banned variables check
             if (bannedVariables.contains(name.substring(2))) {
-                System.out.println("Error: Variable name " + name + " is reserved");
+                System.out.println(RED + "Error: Variable name " + name + " is reserved" + RESET);
                 System.exit(1);
             }
         
