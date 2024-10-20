@@ -59,7 +59,8 @@ public class TypeChecker {
                     String FTYPofFunc = handleReturn(node);
                     // System.out.println(FTYPofFunc);
                     if (FTYPofFunc.equals("void")) {
-                        System.err.println("Error: \"return\" statement in void function");
+                        System.err.println("Error: \"return\" of" + FTYPofFunc +" in void function");
+                        System.err.println();
                         return false;
                     }
                     if (FTYPofFunc.equals(typeOf(node.children.get(1))) && typeOf(node.children.get(1)).equals("num")) {
@@ -94,7 +95,7 @@ public class TypeChecker {
                     if (VNAMEtype.equals(TERMtype)) {
                         return true;
                     } else {
-                        System.out.println("Type Error: assignment type mismatch");
+                        System.out.println("Type Error: assignment of type " + TERMtype + " to " + VNAMEtype + " at " + node.children.get(0).children.get(0).symbol + " = " + node.children.get(2).children.get(0).symbol);
                         return false;
                     }
                 }
@@ -109,6 +110,7 @@ public class TypeChecker {
                     return typecheck(node.children.get(3)) && typecheck(node.children.get(5));
                 } else {
                     System.out.println("Type Error: condition in branch statement is not a boolean");
+                    System.out.println("At: \"if" + node.children.get(1).children.get(0).symbol);
                     return false;
                 }
             }
@@ -338,7 +340,7 @@ public class TypeChecker {
 
 
             default: {
-                return "type not found";
+                return "undefined";
             }
         }
     }

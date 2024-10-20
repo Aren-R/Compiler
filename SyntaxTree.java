@@ -12,7 +12,6 @@ class SyntaxTree {
         // printTree();
     }
 
-    // Build the syntax tree from XML
     public void buildTree(String xmlFilePath) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

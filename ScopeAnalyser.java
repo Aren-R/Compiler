@@ -31,15 +31,6 @@ public class ScopeAnalyser {
         System.out.println("Scope Analysis Completed");
         System.out.println("Symbol Table saved to file SymbolTable.txt\n");
 
-        try (FileWriter fileWriter = new FileWriter("SymbolTable.txt")) {
-            for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
-                SymbolTable.SymbolInfo info = entry.getValue();
-                fileWriter.write("[ID " + info.id + " | Symbol: " + entry.getKey() +" | Old Name "+ info.oldName +" | Type: " + info.type + " | Unique Name: " + info.newName + "]\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         // syntaxTree.printTree();
     }
 
@@ -118,15 +109,12 @@ public class ScopeAnalyser {
     }
 
     public void printScopeStack() {
-        // System.out.println("Current Scope Stack:");
         for (Scope scope : scopeStack) {
-            // System.out.println("Scope ID: " + scope.id);
             printSymbolTable(scope.symbolTable);
         }
     }
     
     public void printSymbolTable(SymbolTable symbolTable) {
-        // System.out.println("Symbol Table:");
         for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.table.entrySet()) {
             String symbol = entry.getKey();
             SymbolTable.SymbolInfo info = entry.getValue();
@@ -145,19 +133,20 @@ public class ScopeAnalyser {
     }
 
     public void printVTable() {
-        // Print table header with formatted column titles
-        System.out.printf("%-15s %-15s %-15s%n", "Key", "Name", "Type");
-    
-        // Print a separator line
-        System.out.println("-------------------------------------------------------------");
-    
-        // Print each entry in the symbol table with consistent formatting
-        for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
-            // String symbol = entry.getKey();
-            SymbolTable.SymbolInfo info = entry.getValue();
-            
-            // Format each line to ensure the columns are properly aligned
-            System.out.printf("%-15s %-15s %-15s%n", info.newName, info.oldName, info.type);
+        try {
+            FileWriter myWriter = new FileWriter("SymbolTable.txt");
+            myWriter.write("Symbol Table\n");
+            myWriter.write("-------------------------------------------------------------\n");
+            myWriter.write(String.format("%-15s %-15s %-15s%n", "Key", "Name", "Type"));
+            myWriter.write("-------------------------------------------------------------\n");
+            for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
+                SymbolTable.SymbolInfo info = entry.getValue();
+                myWriter.write(String.format("%-15s %-15s %-15s%n", info.newName, info.oldName, info.type));
+            }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 
@@ -173,26 +162,23 @@ public class ScopeAnalyser {
         String name = VNAME.children.get(0).symbol;
         String ID = VNAME.children.get(0).id;
         
-        // Add symbol and get the new name
         String newName = scopeStack.peek().symbolTable.addSymbol(name, type, ID);
     
-        // Rename in the syntax tree (if needed)
         VNAME.children.get(0).symbol = newName;
     
-        // Continue traversing the global variable declarations
         handleGlobVars(node.children.get(3));
     }
     
 
     public void handleAtomic(TreeNode node) {
-        TreeNode child = node.children.get(0); // Either CONST or VNAME
+        TreeNode child = node.children.get(0);
         if (child.symbol.equals("CONST")) return;
 
         if (child.symbol.equals("VNAME")) {
             String name = child.children.get(0).symbol;
             try {
                 String newName = scopeStack.peek().lookup(name);
-                child.children.get(0).symbol = newName;  // Rename the variable
+                child.children.get(0).symbol = newName;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 System.exit(1);
@@ -212,57 +198,46 @@ public class ScopeAnalyser {
             System.exit(1);
         }
 
-        traverseTree(node.children.get(2)); // Process the assigned expression
+        traverseTree(node.children.get(2));
     }
 
     public void handleLocVars(TreeNode node) {
 
-        // First local variable (VTYP1, VNAME1)
         TreeNode VTYP1 = node.children.get(0);
         TreeNode VNAME1 = node.children.get(1);
         String type1 = VTYP1.children.get(0).symbol;
         String name1 = VNAME1.children.get(0).symbol;
         String ID1 = VNAME1.children.get(0).id;
     
-        // Add the symbol and get the new name
         String newName1 = scopeStack.peek().symbolTable.addSymbol(name1, type1, ID1);
     
-        // Rename the variable in the syntax tree
         VNAME1.children.get(0).symbol = newName1;
     
-        // Second local variable (VTYP2, VNAME2)
         TreeNode VTYP2 = node.children.get(3);
         TreeNode VNAME2 = node.children.get(4);
         String type2 = VTYP2.children.get(0).symbol;
         String name2 = VNAME2.children.get(0).symbol;
         String ID2 = VNAME2.children.get(0).id;
     
-        // Add the symbol and get the new name
         String newName2 = scopeStack.peek().symbolTable.addSymbol(name2, type2, ID2);
     
-        // Rename the variable in the syntax tree
         VNAME2.children.get(0).symbol = newName2;
     
-        // Third local variable (VTYP3, VNAME3)
         TreeNode VTYP3 = node.children.get(6);
         TreeNode VNAME3 = node.children.get(7);
         String type3 = VTYP3.children.get(0).symbol;
         String name3 = VNAME3.children.get(0).symbol;
         String ID3 = VNAME3.children.get(0).id;
     
-        // Add the symbol and get the new name
         String newName3 = scopeStack.peek().symbolTable.addSymbol(name3, type3, ID3);
     
-        // Rename the variable in the syntax tree
         VNAME3.children.get(0).symbol = newName3;
     }
     
     public void handleHeader(TreeNode node) {
-        // Handle the function name (FNAME)
         TreeNode FNAME = node.children.get(1);
         String name = FNAME.children.get(0).symbol;
     
-        // Look up and rename the function in the syntax tree
         try {
             String newName = scopeStack.peek().lookup(name);
             FNAME.children.get(0).symbol = newName;  // Rename the function
@@ -271,30 +246,30 @@ public class ScopeAnalyser {
             System.exit(1);
         }
     
-        // Handle the first parameter (VNAME1)
+
         TreeNode VNAME1 = node.children.get(3);
         String name1 = VNAME1.children.get(0).symbol;
         String ID1 = VNAME1.children.get(0).id;
     
-        // Add the first parameter and rename it
+
         String newName1 = scopeStack.peek().symbolTable.addSymbol(name1, "num", ID1);
         VNAME1.children.get(0).symbol = newName1;
     
-        // Handle the second parameter (VNAME2)
+
         TreeNode VNAME2 = node.children.get(5);
         String name2 = VNAME2.children.get(0).symbol;
         String ID2 = VNAME2.children.get(0).id;
     
-        // Add the second parameter and rename it
+
         String newName2 = scopeStack.peek().symbolTable.addSymbol(name2, "num", ID2);
         VNAME2.children.get(0).symbol = newName2;
     
-        // Handle the third parameter (VNAME3)
+
         TreeNode VNAME3 = node.children.get(7);
         String name3 = VNAME3.children.get(0).symbol;
         String ID3 = VNAME3.children.get(0).id;
     
-        // Add the third parameter and rename it
+
         String newName3 = scopeStack.peek().symbolTable.addSymbol(name3, "num", ID3);
         VNAME3.children.get(0).symbol = newName3;
     }
@@ -306,7 +281,7 @@ public class ScopeAnalyser {
 
         try {
             String newName = scopeStack.peek().lookup(name);
-            FNAME.children.get(0).symbol = newName;  // Rename the function call
+            FNAME.children.get(0).symbol = newName; 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.exit(1);
@@ -329,26 +304,17 @@ public class ScopeAnalyser {
         }
 
         public String lookup(String name) throws Exception {
-
-            // if (name.startsWith("F")) {
-            //     if (this.symbolTable.table.containsKey(name)) {
-            //         return this.symbolTable.table.get(name).newName;
-            //     }
-            //     throw new Exception("Function " + name + " not declared");
-            // } else {
-
-                Scope currentScope = this;
-                while (currentScope != null) {
-                    if (currentScope.symbolTable.table.containsKey(name)) {
-                        return currentScope.symbolTable.table.get(name).newName;
-                    }
-                    currentScope = currentScope.parent;
+            Scope currentScope = this;
+            while (currentScope != null) {
+                if (currentScope.symbolTable.table.containsKey(name)) {
+                    return currentScope.symbolTable.table.get(name).newName;
                 }
-                if (name.startsWith("F")) {
-                    throw new Exception("Function " + name + " not declared");
-                }
-                throw new Exception("Variable " + name + " not declared");
-            // }
+                currentScope = currentScope.parent;
+            }
+            if (name.startsWith("F")) {
+                throw new Exception("Function " + name + " not declared");
+            }
+            throw new Exception("Variable " + name + " not declared");
         }
     }
 
@@ -360,7 +326,6 @@ public class ScopeAnalyser {
         }
 
         public String addSymbol(String name, String type, String id) {
-            // Handle function declarations
             if (name.startsWith("F")) {
                 if (table.containsKey(name)) {
                     System.out.println("Error: Double declaration of function " + name);
@@ -368,16 +333,14 @@ public class ScopeAnalyser {
                 }
                 SymbolInfo symbolInfo = new SymbolInfo(name, type, id);
                 table.put(name, symbolInfo);
-                return symbolInfo.newName;  // Return the newName for functions
+                return symbolInfo.newName;
             }
         
-            // Check for reserved variable names
             if (bannedVariables.contains(name.substring(2))) {
                 System.out.println("Error: Variable name " + name + " is reserved");
                 System.exit(1);
             }
         
-            // Handle variable declarations
             if (table.containsKey(name)) {
                 System.out.println("Error: Double declaration of variable " + name);
                 System.exit(1);
@@ -385,7 +348,7 @@ public class ScopeAnalyser {
         
             SymbolInfo symbolInfo = new SymbolInfo(name, type, id);
             table.put(name, symbolInfo);
-            return symbolInfo.newName;  // Return the newName for variables
+            return symbolInfo.newName; 
         }
         
         
