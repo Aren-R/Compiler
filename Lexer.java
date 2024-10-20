@@ -75,7 +75,7 @@ public class Lexer{
                 token.setType(curState.classType);
                 tokenisedInputStream += token.toXML();
             } else {
-                throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + "'");
+                throw new InvalidTokenException("\nError at line " + lineNumber + ": Invalid token '" + token.contents + "'");
             }
         }
 
@@ -91,7 +91,7 @@ public class Lexer{
             e.printStackTrace();
         }
         
-        System.out.println("\nLexing Completed\n");
+        System.out.println("\nLexing Completed");
         System.out.println("Tokens saved to file Tokens.xml\n");
         return tokenisedInputStream;
     }

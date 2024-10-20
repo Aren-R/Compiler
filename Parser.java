@@ -83,7 +83,7 @@ public class Parser {
 
                 assignParents();
                 writeSyntaxTreeToFile("SyntaxTree.xml");
-                System.out.println("\nParsing Completed\n");
+                System.out.println("Parsing Completed");
                 System.out.println("Syntax Tree written to file: SyntaxTree.xml");
                 break;
             }
