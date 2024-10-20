@@ -7,6 +7,10 @@ public class Lexer{
     public String inputStream;
     public States DFA; 
     private int lineNumber;
+    String ANSI_GREEN = "\u001B[32m";
+    String ANSI_RESET = "\u001B[0m";
+    String RED = "\u001B[31m";
+
 
     public Lexer() {
         String inputFilePath = "input.txt";
@@ -52,8 +56,8 @@ public class Lexer{
 
             curState = DFA.transition(currentChar);
 
-            if (curState.classType.equals("Error: Transition not found")) {
-                throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'");
+            if (curState.classType.equals(RED + "Error: Transition not found" + ANSI_RESET)) {
+                throw new InvalidTokenException(RED + "Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'" + ANSI_RESET);
             }
 
             if (currentChar.equals(" ") || currentChar.equals("\t") || currentChar.equals("\n") || currentChar.equals("\r")) {
@@ -62,7 +66,7 @@ public class Lexer{
                     tokenisedInputStream += token.toXML();
                     token.clearToken();
                 } else {
-                    throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + "'");
+                    throw new InvalidTokenException(RED + "Error at line " + lineNumber + ": Invalid token '" + token.contents + "'" + ANSI_RESET);
                 }
             } else {
                 token.addToToken(currentChar);
@@ -76,7 +80,7 @@ public class Lexer{
                 token.setType(curState.classType);
                 tokenisedInputStream += token.toXML();
             } else {
-                throw new InvalidTokenException("\nError at line " + lineNumber + ": Invalid token '" + token.contents + "'");
+                throw new InvalidTokenException(RED + "\nError at line " + lineNumber + ": Invalid token '" + token.contents + "'" + ANSI_RESET);
             }
         }
 
@@ -91,11 +95,6 @@ public class Lexer{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-
-        // ANSI escape code for green text
-        String ANSI_GREEN = "\u001B[32m";
-        String ANSI_RESET = "\u001B[0m";
 
         System.out.println(ANSI_GREEN + "Lexing Completed" + ANSI_RESET);
         System.out.println(ANSI_GREEN + "Tokens saved to file Tokens.xml\n" + ANSI_RESET);
