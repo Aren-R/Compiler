@@ -22,6 +22,7 @@ public class Parser {
     private int uniqueIdCounter;         
 
     public Parser() {
+        System.out.println("Running Parser...");
         terminalTable = new HashMap<>();
         nonTerminalTable = new HashMap<>();
         stack = new Stack<TokenNode>();
@@ -82,9 +83,11 @@ public class Parser {
                 }
 
                 assignParents();
+                String ANSI_GREEN = "\u001B[32m";
+                String ANSI_RESET = "\u001B[0m";
                 writeSyntaxTreeToFile("SyntaxTree.xml");
-                System.out.println("Parsing Completed");
-                System.out.println("Syntax Tree written to file: SyntaxTree.xml");
+                System.out.println(ANSI_GREEN + "Syntax Tree Generated Successfully!" + ANSI_RESET);
+                System.out.println(ANSI_GREEN + "Syntax Tree saved to SyntaxTree.xml" + ANSI_RESET);
                 break;
             }
             

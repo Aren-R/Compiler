@@ -23,6 +23,7 @@ public class ScopeAnalyser {
     }
 
     public void run() {
+        System.out.println("\nRunning Scope Analysis...");
         Scope globalScope = new Scope(null);
         scopeStack.push(globalScope);
         permanentScopeStack.add(globalScope); 
@@ -32,10 +33,10 @@ public class ScopeAnalyser {
         createVTable();
         printVTable();
 
-        syntaxTree.printTree();
-
-        System.out.println("\nScope Analysis Completed");
-        System.out.println("Symbol Table saved to file SymbolTable.txt\n");
+        // syntaxTree.printTree();
+        String ANSI_GREEN = "\u001B[32m";
+        System.out.println(ANSI_GREEN + "Scope Analysis Completed");
+        System.out.println(ANSI_GREEN + "Symbol Table saved to file SymbolTable.txt\n" + "\u001B[0m");
     }
 
     public void traverseTree(TreeNode node) {
@@ -164,14 +165,14 @@ public class ScopeAnalyser {
             e.printStackTrace();
         }
 
-        System.out.println("Symbol Table\n");
-        System.out.println("-------------------------------------------------------------");
-        System.out.println(String.format("%-15s %-15s %-15s", "Key", "Name", "Type"));
-        System.out.println("-------------------------------------------------------------");
-        for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
-            SymbolTable.SymbolInfo info = entry.getValue();
-            System.out.println(String.format("%-15s %-15s %-15s", info.newName, info.oldName, info.type));
-        }
+        // System.out.println("Symbol Table\n");
+        // System.out.println("-------------------------------------------------------------");
+        // System.out.println(String.format("%-15s %-15s %-15s", "Key", "Name", "Type"));
+        // System.out.println("-------------------------------------------------------------");
+        // for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
+        //     SymbolTable.SymbolInfo info = entry.getValue();
+        //     System.out.println(String.format("%-15s %-15s %-15s", info.newName, info.oldName, info.type));
+        // }
     }
 
     public void handleGlobVars(TreeNode node) {

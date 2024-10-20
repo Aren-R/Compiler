@@ -31,6 +31,7 @@ public class Lexer{
     }
 
     public String run() throws InvalidTokenException {
+        System.out.println("\nRunning Lexer...");
         String tokenisedInputStream = "<TOKENSTREAM>\n";
         Integer indexOfInput = 0;
         Token token = new Token();
@@ -91,8 +92,14 @@ public class Lexer{
             e.printStackTrace();
         }
         
-        System.out.println("\nLexing Completed");
-        System.out.println("Tokens saved to file Tokens.xml\n");
+
+        // ANSI escape code for green text
+        String ANSI_GREEN = "\u001B[32m";
+        String ANSI_RESET = "\u001B[0m";
+
+        System.out.println(ANSI_GREEN + "Lexing Completed" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Tokens saved to file Tokens.xml\n" + ANSI_RESET);
+
         return tokenisedInputStream;
     }
 

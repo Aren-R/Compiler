@@ -3,6 +3,9 @@ import java.util.HashMap;
 public class TypeChecker {
     private TreeNode root;
     public HashMap<String, ScopeAnalyser.SymbolTable.SymbolInfo> symbolTable = new HashMap<>();
+    public String RED = "\u001B[31m";
+    public String RESET = "\u001B[0m";
+    public String GREEN = "\u001B[32m";
 
     public TypeChecker(TreeNode root, HashMap<String, ScopeAnalyser.SymbolTable.SymbolInfo> symbolTable) {
         this.root = root;
@@ -10,13 +13,13 @@ public class TypeChecker {
     }
 
     public void run() {
-
-        System.out.println("Type Checking Completed");
+        System.out.println("Type Checking Started");
+        // System.out.println("Type Checking Completed");
         boolean result = typecheck(root);
         if (result) {
-            System.out.println("Type Checking successful");
+            System.out.println(GREEN + "Type Checking successful" + RESET);
         } else {
-            System.out.println("Program has Type Errors");
+            System.out.println(RED + "Program has Type Errors" + RESET);
         }
     }
 
@@ -51,7 +54,7 @@ public class TypeChecker {
                     if (typeOf(node.children.get(1)).equals("num") || typeOf(node.children.get(1)).equals("text")) {
                         return true;
                     } else {
-                        System.out.println("Type Error: print statement type mismatch");
+                        System.out.println(RED + "Type Error: print statement type mismatch" + RESET);
                         return false;
                     }
                 }
@@ -60,14 +63,14 @@ public class TypeChecker {
                     String FTYPofFunc = handleReturn(node);
                     // System.out.println(FTYPofFunc);
                     if (FTYPofFunc.equals("void")) {
-                        System.err.println("Error: \"return\" in void function");
+                        System.err.println(RED + "Error: \"return\" in void function" + RESET);
                         System.err.println();
                         return false;
                     }
                     if (FTYPofFunc.equals(typeOf(node.children.get(1))) && typeOf(node.children.get(1)).equals("num")) {
                         return true;
                     } else {
-                        System.out.println("Error: \"return\" statement type mismatch");
+                        System.out.println(RED + "Error: \"return\" statement type mismatch" + RESET);
                         return false;
                     }
                 }
@@ -96,8 +99,8 @@ public class TypeChecker {
                     if (VNAMEtype.equals(TERMtype)) {
                         return true;
                     } else {
-                        System.out.println("Type Error: assignment type mismatch");
-                        System.out.println("\""+ lookup(node.children.get(0).children.get(0).symbol) + "\" is not of type " + "\"" + TERMtype + "\"");    
+                        System.out.println(RED + "Type Error: assignment type mismatch" + RESET);
+                        System.out.println(RED + "\""+ lookup(node.children.get(0).children.get(0).symbol) + "\" is not of type " + "\"" + TERMtype + "\"" + RESET);    
                         return false;
                     }
                 }
@@ -111,8 +114,8 @@ public class TypeChecker {
                 if (typeOf(node.children.get(1)).equals("bool")) {
                     return typecheck(node.children.get(3)) && typecheck(node.children.get(5));
                 } else {
-                    System.out.println("Type Error: condition in branch statement is not a boolean");
-                    System.out.println("At: \"if" + node.children.get(1).children.get(0).symbol);
+                    System.out.println(RED + "Type Error: condition in branch statement is not a boolean" + RESET);
+                    System.out.println(RED + "At: \"if" + node.children.get(1).children.get(0).symbol + RESET);
                     return false;
                 }
             }
@@ -136,7 +139,7 @@ public class TypeChecker {
                 if (t3.equals(t5) && t5.equals(t7) && t3.equals("num")) {
                     return true;
                 } else {
-                    System.out.println("Type Error: function arguments type mismatch");
+                    System.out.println(RED + "Type Error: function arguments type mismatch" + RESET);
                     return false;
                 }   
             }
@@ -261,21 +264,21 @@ public class TypeChecker {
                     if (t0.equals("comparison") && t1.equals("num") && t2.equals("num")) {
                         return "bool";
                     } else if (t0.equals("comparison")) {
-                        System.out.println("Type Error: Expected 'num' for both operands, got '" + t1 + "' and '" + t2 + "'");
+                        System.out.println(RED + "Type Error: Expected 'num' for both operands, got '" + t1 + "' and '" + t2 + "'" + RESET);
                         System.exit(1);
                     }
                     
                     if (t0.equals("bool") && t1.equals("bool") && t2.equals("bool")) {
                         return "bool";
                     } else if (t0.equals("bool")) {
-                        System.out.println("Type Error: Expected 'bool' for both operands, got '" + t1 + "' and '" + t2 + "'");
+                        System.out.println(RED + "Type Error: Expected 'bool' for both operands, got '" + t1 + "' and '" + t2 + "'" + RESET);
                         System.exit(1);
                     }
                     
                     if (t0.equals("num") && t1.equals("num") && t2.equals("num")) {
                         return "num";
                     } else if (t0.equals("num")) {
-                        System.out.println("Type Error: Expected 'num' for both operands, got '" + t1 + "' and '" + t2 + "'");
+                        System.out.println(RED + "Type Error: Expected 'num' for both operands, got '" + t1 + "' and '" + t2 + "'" + RESET);
                         System.exit(1);
                     }
                 
@@ -335,7 +338,7 @@ public class TypeChecker {
                     if (typeOf(node.children.get(0)).equals("bool") && typeOf(node.children.get(2)).equals("bool")) {
                         return "bool";
                     } else {
-                        System.out.println("Type Error: Expected 'bool' for both operands, got '" + typeOf(node.children.get(0)) + "' and '" + typeOf(node.children.get(2)) + "'");
+                        System.out.println(RED + "Type Error: Expected 'bool' for both operands, got '" + typeOf(node.children.get(0)) + "' and '" + typeOf(node.children.get(2)) + "'" + RESET);
                         System.exit(1);
                         return "undefined";
                     }
@@ -377,7 +380,7 @@ public class TypeChecker {
         TreeNode VNAME = node.children.get(0);
         TreeNode V = VNAME.children.get(0);
         String symbol = lookup(V.symbol);
-        System.out.println("Type Error: function argument " + symbol + " is not of type num");
+        System.out.println(RED + "Type Error: function argument " + symbol + " is not of type num" + RESET);
     }
 }
 
