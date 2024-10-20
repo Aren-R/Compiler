@@ -4,19 +4,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Lexer{
-    public String inputStream; // The code that has to be lexed
+    public String inputStream;
     public States DFA; 
-    private int lineNumber; // Counter for tracking the line number
+    private int lineNumber;
 
     public Lexer() {
-        String inputFilePath = "resources/input.txt";  // Update this with your file path
+        String inputFilePath = "input.txt";
         StringBuilder inputStream = new StringBuilder();
         
-        // Read the file contents
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                inputStream.append(line).append("\n");  // Add a newline character after each line
+                inputStream.append(line).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -24,40 +23,33 @@ public class Lexer{
         }
         this.inputStream = inputStream.toString();
         this.DFA = new States();
-        this.lineNumber = 1; // Start from line 1
+        this.lineNumber = 1;
     }
 
-    // Set the code that has to be lexed
     public void setInputStream(String inputStream) {
         this.inputStream = inputStream;
     }
 
-    // Run the lexer
     public String run() throws InvalidTokenException {
         String tokenisedInputStream = "<TOKENSTREAM>\n";
         Integer indexOfInput = 0;
         Token token = new Token();
         States.State curState = DFA.currentState;
 
-        // Continuously read the input stream
         while (indexOfInput < inputStream.length()) {
 
             String currentChar = inputStream.substring(indexOfInput, indexOfInput + 1);
-            // System.out.println("Processing character: " + currentChar);
 
-            // Track line numbers (newline character increases the line number)
             if (currentChar.equals("\n")) {
                 lineNumber++;
             }
 
-            // Skip leading whitespace characters (only if token is empty)
             if ((currentChar.equals("\r") || currentChar.equals("\t") || currentChar.equals("\n") || currentChar.equals(" ")) && token.contents.equals("")) {
                 indexOfInput++;
                 continue;
             }
 
             curState = DFA.transition(currentChar);
-            // System.out.println("Current state: " + curState.classType);
 
             if (curState.classType.equals("Error: Transition not found")) {
                 throw new InvalidTokenException("Error at line " + lineNumber + ": Invalid token '" + token.contents + currentChar + "'");
@@ -78,7 +70,6 @@ public class Lexer{
             indexOfInput++;
         }
 
-        // Check if there's an incomplete token at the end of input
         if (!token.contents.isEmpty()) {
             if (curState.isAccepting) {
                 token.setType(curState.classType);
@@ -93,20 +84,18 @@ public class Lexer{
         tokenisedInputStream += token.toXML();
         tokenisedInputStream += "</TOKENSTREAM>\n";
 
-        // Save to XML
 
-        try (FileWriter fileWriter = new FileWriter("resources/tokens.xml")) {
+        try (FileWriter fileWriter = new FileWriter("Tokens.xml")) {
             fileWriter.write(tokenisedInputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
         
         System.out.println("\nLexing Completed\n");
+        System.out.println("Tokens saved to file Tokens.xml\n");
         return tokenisedInputStream;
     }
 
-    //================================================================================================
-    //THIS IS THE TOKEN CLASS WHICH RETURNS XML'ified TOKENS
     public class Token {
         public static int ID = 1;
         public String contents;
@@ -146,6 +135,5 @@ public class Lexer{
             super(message);
         }
     }
-    
-    //================================================================================================
+
 }

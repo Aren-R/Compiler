@@ -8,7 +8,7 @@ class SyntaxTree {
 
     public SyntaxTree() {
         nodeMap = new HashMap<>();
-        buildTree("resources/SyntaxTree.xml");
+        buildTree("SyntaxTree.xml");
         // printTree();
     }
 
@@ -20,12 +20,10 @@ class SyntaxTree {
             Document doc = builder.parse(xmlFilePath);
             Element rootElement = doc.getDocumentElement();
 
-            // Process the root node
             Element rootNodeElement = (Element) rootElement.getElementsByTagName("ROOT").item(0);
             root = processNode(rootNodeElement);
             nodeMap.put(root.id, root);
 
-            // Process inner nodes
             NodeList innerNodes = rootElement.getElementsByTagName("IN");
             for (int i = 0; i < innerNodes.getLength(); i++) {
                 Element innerNodeElement = (Element) innerNodes.item(i);
@@ -33,7 +31,6 @@ class SyntaxTree {
                 nodeMap.put(innerNode.id, innerNode);
             }
 
-            // Process leaf nodes
             NodeList leafNodes = rootElement.getElementsByTagName("LEAF");
             for (int i = 0; i < leafNodes.getLength(); i++) {
                 Element leafNodeElement = (Element) leafNodes.item(i);
@@ -41,7 +38,6 @@ class SyntaxTree {
                 nodeMap.put(leafNode.id, leafNode);
             }
 
-            // Establish parent-child relationships
             establishParentChildRelationships(rootElement);
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +48,6 @@ class SyntaxTree {
         renameNode(root, symbolTable);
     }
 
-    // Recursive method to rename each node with the corresponding symbol from the symbol table
     private void renameNode(TreeNode node, HashMap<String, ScopeAnalyser.SymbolTable.SymbolInfo> symbolTable) {
 
         if (symbolTable.containsKey(node.id)) {
@@ -65,14 +60,12 @@ class SyntaxTree {
         }
     }
 
-    // Process a general node (either root or inner node)
     public TreeNode processNode(Element nodeElement) {
         String id = nodeElement.getElementsByTagName("UNID").item(0).getTextContent();
         String symbol = nodeElement.getElementsByTagName("SYMB").item(0).getTextContent();
         return new TreeNode(id, symbol);
     }
 
-    // Process a leaf node with additional fields like ID, CLASS, and WORD
     public TreeNode processLeafNode(Element leafElement) {
         String id = leafElement.getElementsByTagName("UNID").item(0).getTextContent();
         Element terminal = (Element) leafElement.getElementsByTagName("TERMINAL").item(0);
@@ -82,17 +75,16 @@ class SyntaxTree {
         String tokenId = tok.getElementsByTagName("ID").item(0).getTextContent();
         String tokenClass = tok.getElementsByTagName("CLASS").item(0).getTextContent();
 
-        // Create a leaf node with extra fields (ID, CLASS, and WORD)
         return new TreeNode(id, word, tokenId, tokenClass);
     }
 
-    // Establish parent-child relationships by reading the "PARENT" and "CHILDREN" fields
+
     public void establishParentChildRelationships(Element rootElement) {
-        // Handle the ROOT node first
+
         Element rootNodeElement = (Element) rootElement.getElementsByTagName("ROOT").item(0);
         establishChildren(rootNodeElement, root);
 
-        // Handle inner nodes
+
         NodeList innerNodes = rootElement.getElementsByTagName("IN");
         for (int i = innerNodes.getLength()-1; i >= 0; i--) {
             Element innerNodeElement = (Element) innerNodes.item(i);
@@ -100,7 +92,7 @@ class SyntaxTree {
             String parentId = innerNodeElement.getElementsByTagName("PARENT").item(0).getTextContent();
             TreeNode parentNode = nodeMap.get(parentId);
 
-            if (!parentNode.getChildren().contains(childNode)) {  // Check if child is already added
+            if (!parentNode.getChildren().contains(childNode)) { 
                 parentNode.addChild(childNode);
             }
 
@@ -108,7 +100,7 @@ class SyntaxTree {
         }
     }
 
-    // Establish the children for a given node
+
     public void establishChildren(Element nodeElement, TreeNode parentNode) {
         NodeList childrenList = nodeElement.getElementsByTagName("CHILDREN").item(0).getChildNodes();
         for (int i = childrenList.getLength()-1; i >= 0; i--) {
@@ -129,17 +121,16 @@ class SyntaxTree {
         printNode(root, 0);
     }
 
-    // Recursive method to print each node and its children
     private void printNode(TreeNode node, int depth) {
-        for (int i = 0; i < depth; i++) System.out.print("|"); // Indentation for hierarchy
-        System.out.println(node); // Print the current node
+        for (int i = 0; i < depth; i++) System.out.print("|");
+        System.out.println(node);
         for (TreeNode child : node.getChildren()) {
             printNode(child, depth + 1); 
         }
     }
 }
 
-// TreeNode class representing a node in the syntax tree
+
 class TreeNode {
     public String id;
     public String symbol;
@@ -148,7 +139,6 @@ class TreeNode {
     public List<TreeNode> children;
     public TreeNode parent;  
 
-    // Constructor for inner/root nodes
     public TreeNode(String id, String symbol) {
         this.id = id;
         this.symbol = symbol;
@@ -156,10 +146,9 @@ class TreeNode {
         this.parent = null;
     }
 
-    // Constructor for leaf nodes with extra fields (ID, CLASS, WORD)
     public TreeNode(String id, String word, String tokenId, String tokenClass) {
         this.id = id;
-        this.symbol = word; // Word as the symbol for leaf nodes
+        this.symbol = word;
         this.tokenId = tokenId;
         this.tokenClass = tokenClass;
         this.children = new ArrayList<>();

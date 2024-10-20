@@ -15,18 +15,17 @@ public class Parser {
     private Stack<TokenNode> stack;
     private Document tokenStream;
 
-    // Variables for syntax tree construction
-    private Document syntaxTree;          // XML Document to hold the syntax tree
-    private Element rootElement;          // ROOT element in the syntax tree
-    private Element innerNodesElement;    // INNERNODES element
-    private Element leafNodesElement;     // LEAFNODES element
-    private int uniqueIdCounter;          // Counter for assigning unique node IDs
+    private Document syntaxTree;
+    private Element rootElement;          
+    private Element innerNodesElement;    
+    private Element leafNodesElement;     
+    private int uniqueIdCounter;         
 
     public Parser() {
         terminalTable = new HashMap<>();
         nonTerminalTable = new HashMap<>();
         stack = new Stack<TokenNode>();
-        uniqueIdCounter = 1;  // Start IDs at 1
+        uniqueIdCounter = 1;
 
         initializeParsingTable();
         initializeSyntaxTree();
@@ -86,18 +85,17 @@ public class Parser {
                 }
 
                 assignParents();
-                writeSyntaxTreeToFile("resources/syntaxTree.xml");
+                writeSyntaxTreeToFile("SyntaxTree.xml");
                 System.out.println("\nParsing Completed\n");
+                System.out.println("Syntax Tree written to file: SyntaxTree.xml");
                 break;
             }
             
             if (action.startsWith("s")) {
-                // SHIFT action
                 int nextState = Integer.parseInt(action.substring(1));
                 TokenNode newTokenNode = new TokenNode(nextState, tokenClass, tokenWord);
-                stack.push(newTokenNode); // Push the new node onto the stack
+                stack.push(newTokenNode);
 
-                // Add this token as a leaf node in the syntax tree
                 addLeafNode(token, newTokenNode);
                 i += 1;
             }

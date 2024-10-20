@@ -1,4 +1,6 @@
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ScopeAnalyser {
     public TreeNode root;
@@ -27,6 +29,17 @@ public class ScopeAnalyser {
         createVTable();
         printVTable();
         System.out.println("Scope Analysis Completed");
+        System.out.println("Symbol Table saved to file SymbolTable.txt\n");
+
+        try (FileWriter fileWriter = new FileWriter("SymbolTable.txt")) {
+            for (Map.Entry<String, SymbolTable.SymbolInfo> entry : symbolTable.entrySet()) {
+                SymbolTable.SymbolInfo info = entry.getValue();
+                fileWriter.write("[ID " + info.id + " | Symbol: " + entry.getKey() +" | Old Name "+ info.oldName +" | Type: " + info.type + " | Unique Name: " + info.newName + "]\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // syntaxTree.printTree();
     }
 
