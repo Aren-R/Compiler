@@ -17,5 +17,5 @@ var_2           V_y             num
 var_3           V_a             num            
 var_14          V_msg           text           
 var_13          V_product       num            
-var_12          V_temp1         num            
+var_12          V_sum           num            
 var_11          V_f             num            

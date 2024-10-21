@@ -6,11 +6,11 @@ begin
     V_x = F_compute ( V_x , 2 , 3 ) ;
     V_x = F_compute ( V_x , V_x , 3 ) ;
     V_x = F_compute ( V_x , 2 , V_y ) ;
-    V_x = F_compute ( 1 , 2 , V_y ) ;
-    if eq ( V_x , 8 ) then
-        begin
-            V_y = mul ( V_x , 2 ) ;
-        end
+    V_x = F_compute ( 2 , 2 , 2 ) ;
+    if and ( eq ( V_x , 8 ) , grt ( 3 , 5 ) ) then
+    begin
+        V_y = mul ( V_x , 2 ) ;
+    end
     else
         begin
             halt ;
@@ -27,7 +27,7 @@ num F_compute ( V_a , V_b , V_c ) {
             end
         else
             begin
-                return V_c ;
+                V_x = F_compute ( 1 , 2 , V_y ) ;
             end ;
     end
 }

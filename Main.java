@@ -19,6 +19,10 @@ public class Main {
             TypeChecker typeChecker = new TypeChecker(scopeAnalyser.root, scopeAnalyser.symbolTable);
             typeChecker.run();
 
+            // InterMediate Code Generation
+            IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator(scopeAnalyser.root, scopeAnalyser.symbolTable);
+            intermediateCodeGenerator.run();
+
         } catch (Exception e) {
             System.out.println("\n"+e.getMessage());;
             return;
