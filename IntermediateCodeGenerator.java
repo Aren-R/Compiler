@@ -81,6 +81,7 @@ public class IntermediateCodeGenerator {
                 }
             }
 
+
             case "ASSIGN": {
                 if (node.children.get(1).symbol.equals("<")) {
                     return "INPUT " + translate(node.children.get(0));
@@ -173,19 +174,29 @@ public class IntermediateCodeGenerator {
                 }
             }
 
-            case "CONST": {
-                if (node.children.get(0).tokenClass.equals("N")) {
-                    return place + " := " +  node.children.get(0).symbol+ "\n";
-                } else if (node.children.get(0).tokenClass.equals("T")) {
-                    return place + " := " + node.children.get(0).symbol + "\n";
-                }
-            }
+
 
             case "ARG": {
                 if (node.children.get(0).symbol.equals("ATOMIC")) {
                     return translate(node.children.get(0), place);
                 } else if (node.children.get(0).symbol.equals("OP")) {
                     return translate(node.children.get(0), place);
+                }
+            }
+
+            case "ATOMIC": {
+                if (node.children.get(0).symbol.equals("VNAME")) {
+                    return translate(node.children.get(0));
+                } else if (node.children.get(0).symbol.equals("CONST")) {
+                    return translate(node.children.get(0), place);
+                }
+            }
+
+            case "CONST": {
+                if (node.children.get(0).tokenClass.equals("N")) {
+                    return "\n" + place + " := " +  node.children.get(0).symbol+ "\n";
+                } else if (node.children.get(0).tokenClass.equals("T")) {
+                    return "\n" + place + " := " + node.children.get(0).symbol + "\n";
                 }
             }
         }
