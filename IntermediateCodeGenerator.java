@@ -18,12 +18,18 @@ public class IntermediateCodeGenerator {
 
         try {
             java.io.FileWriter myWriter = new java.io.FileWriter("IntermediateCode.txt");
-            myWriter.write(output);
+            String[] lines = output.split("\n");
+            for (String line : lines) {
+                if (!line.trim().isEmpty()) {
+                    myWriter.write(line + "\n"); 
+                }
+            }
             myWriter.close();
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+        
 
         System.out.println(GREEN + "Intermediate Code written to IntermediateCode.txt" + "\u001B[0m");
 
@@ -55,13 +61,21 @@ public class IntermediateCodeGenerator {
                 return aCode + " STOP " + fCode;
             }
 
+            case "ATOMIC": {
+                if (node.children.get(0).symbol.equals("VNAME")) {
+                    return translate(node.children.get(0));
+                } else if (node.children.get(0).symbol.equals("CONST")) {
+                    return translate(node.children.get(0));
+                }
+            }
+
             case "ALGO": {
                 return translate(node.children.get(1));
             }
 
             case "INSTRUC": {
                 if (node.children.size() == 0) {
-                    return "\nREM END";
+                    return "REM END\n";
                 }
                 String code1 = translate(node.children.get(0));
                 String code2 = translate(node.children.get(2));
@@ -70,17 +84,17 @@ public class IntermediateCodeGenerator {
 
             case "COMMAND": {
                 if (node.children.get(0).symbol.equals("skip")) {
-                    return " REM DO NOTHING ";
+                    return " REM DO NOTHING\n";
                 } else if (node.children.get(0).symbol.equals("halt")) {
-                    return " STOP ";
+                    return "STOP\n";
                 } else if (node.children.get(0).symbol.equals("print")) {
-                    return "PRINT " + translate(node.children.get(1));
+                    return "PRINT " + translate(node.children.get(1)) + "\n";
                 } else if (node.children.get(0).symbol.equals("ASSIGN")) {
-                    return translate(node.children.get(0));
+                    return translate(node.children.get(0)) + "\n";
                 } else if (node.children.get(0).symbol.equals("CALL")) {
-                    return translate(node.children.get(0));
+                    return translate(node.children.get(0)) + "\n";
                 } else if (node.children.get(0).symbol.equals("BRANCH")) {
-                    return translate(node.children.get(0));
+                    return translate(node.children.get(0)) + "\n";
                 } else if (node.children.get(0).symbol.equals("return")) {
                     return " PHASE 5b NOT DONE ";
                 }
@@ -89,12 +103,12 @@ public class IntermediateCodeGenerator {
 
             case "ASSIGN": {
                 if (node.children.get(1).symbol.equals("<")) {
-                    return "\nINPUT " + translate(node.children.get(0));
+                    return "INPUT " + translate(node.children.get(0)) + "\n";
                 } else if (node.children.get(1).symbol.equals("=")) {
                     String place = newVar();
                     String x = translate(node.children.get(0));
                     String TERM = translate(node.children.get(2), place);
-                    return TERM + "\n" + x + " := " + place + "";
+                    return TERM + "\n" + x + " := " + place + "\n";
                 }
             }
 
@@ -103,7 +117,7 @@ public class IntermediateCodeGenerator {
                 String p1 = translate(node.children.get(2));
                 String p2 = translate(node.children.get(4));
                 String p3 = translate(node.children.get(6));
-                return "CALL_ " + FNAME + "(" + p1 + "," + p2 + "," + p3 + ")";
+                return "CALL_ " + FNAME + "(" + p1 + "," + p2 + "," + p3 + ")\n";
             }
 
             case "UNOP": {
@@ -142,7 +156,7 @@ public class IntermediateCodeGenerator {
                     String code1 = translateCond(node.children.get(1), L1, L2);
                     String code2 = translate(node.children.get(3));
                     String code3 = translate(node.children.get(5));
-                    return code1 + "LABEL " + L1 + "\n" + code2 + "\nGOTO " + L3 + "\n" + "LABEL " + L2 + "\n" + code3 + "\nLABEL " + L3 + "\n";
+                    return code1 + "LABEL " + L1 + code2 + "GOTO " + L3  + "LABEL" + L2  + code3 + "LABEL " + L3 + "\n";
                 }
                 if (node.children.get(1).children.get(0).symbol.equals("COMPOSIT")) {
                     String L1 = newLabel();
@@ -151,7 +165,7 @@ public class IntermediateCodeGenerator {
                     String code1 = translateCond(node.children.get(1), L1, L2);
                     String code2 = translate(node.children.get(3));
                     String code3 = translate(node.children.get(5));
-                    return code1 + "LABEL " + L1 + "\n" + code2 + "\nGOTO " + L3 + "\n" + "LABEL " + L2 + "\n" + code3 + "\nLABEL " + L3 + "\n";
+                    return code1 + "LABEL " + L1 + "\n" + code2 + "GOTO " + L3 + "\n" + "LABEL " + L2 + "\n" + code3 + "LABEL " + L3 + "\n";
                 }
                 
             }
@@ -230,13 +244,13 @@ public class IntermediateCodeGenerator {
                 String op = translate(node.children.get(0).children.get(0));
                 //unop
                 if (op.equals("!")) {
-                    translateCond(node.children.get(0).children.get(2), L2, L1);
+                    return translateCond(node.children.get(0).children.get(2), L2, L1);
                 }
 
                 //binop
                 if (op.equals("&&")) {
                     String arg2 = newLabel();
-                    String code1 = translateCond(node.children.get(0).children.get(2), L1, arg2);
+                    String code1 = translateCond(node.children.get(0).children.get(2), arg2, L2);
                     String code2 = translateCond(node.children.get(0).children.get(4), L1, L2);
                     return code1 + "LABEL " + arg2 + "\n" + code2;
                 }
@@ -247,14 +261,10 @@ public class IntermediateCodeGenerator {
                     String code2 = translateCond(node.children.get(0).children.get(4), L1, L2);
                     return code1 + "LABEL " + arg2 + "\n" + code2;
                 }
-
-                // String code1 = translateCond(node.children.get(0).children.get(2), L1, L2);
-                // String code2 = translateCond(node.children.get(0).children.get(4), L1, L2);
-                
-
             }
         }
 
+        //simple within composite args
         if (node.symbol.equals("SIMPLE")) {
             String op = translate(node.children.get(0));
             String place1 = newVar();

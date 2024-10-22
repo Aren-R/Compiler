@@ -1,47 +1,39 @@
-
 v_0 := 4
-
 var_0 := v_0
-v_1 := 20.119
-
+v_1 := 20.011
 var_2 := v_1
 v_2 := "Hallot"
-
 var_1 := v_2
 var_3 := v_3
 INPUT var_3
 v_4 := var_0 
 v_5 := 40.1
-
 IF v_4 > v_5
  THEN L_0 
  ELSE L_3 
 LABEL L_3
-
 v_6 := var_0 
 v_7 := var_2
 IF v_6 = v_7
  THEN L_0 
  ELSE L_1 
 LABEL L_0
-PRINT  REM DO NOTHING  STOP 
+PRINT var_1
+ REM DO NOTHING
+STOP
 REM END
 GOTO L_2
 LABEL L_1
-
 v_8 := var_0 
 v_9 := var_2
 IF v_8 = v_9
- THEN L_4 
- ELSE L_5 
+ THEN L_5 
+ ELSE L_4 
 LABEL L_4
  v_10 := SQR v_11
-
 var_0 := v_10
 v_13 := 2
-
 v_14 := 20.1
- 
 v_12 := v_13 + v_14
 var_2 := v_12
 v_16 := var_0
@@ -59,11 +51,9 @@ var_2 := v_21
 REM END
 GOTO L_6
 LABEL L_5
-
 REM END
 LABEL L_6
-
 REM END
 LABEL L_2
-
-REM END STOP 
+REM END
+ STOP 

@@ -2,7 +2,7 @@ main
 num V_x , text V_msg , num V_y , num V_res , 
 begin
     V_x = 4 ;
-    V_y = 20.119 ;
+    V_y = 20.10 ;
     V_msg = "Hallot" ;
     V_res = F_compute ( 5 , V_x , V_y ) ;
     V_res < input ;
