@@ -78,6 +78,10 @@ public class ScopeAnalyser {
                 TreeNode ALGO = node.children.get(2);
                 TreeNode MAINFUNCTIONS = node.children.get(3);
 
+                if (MAINFUNCTIONS.children.size() == 0) {
+                    traverseTree(ALGO);
+                    break;
+                }
                 TreeNode DECL = MAINFUNCTIONS.children.get(0);
                 TreeNode MOREFUNCTIONS = MAINFUNCTIONS.children.get(1);
 
