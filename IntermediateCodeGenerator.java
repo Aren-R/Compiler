@@ -18,7 +18,7 @@ public class IntermediateCodeGenerator {
     }
 
     public String translate(TreeNode node) {
-        // System.out.println("Translating: " + node.symbol);
+        System.out.println("Translating: " + node.symbol);
         switch (node.symbol) {
             case "GLOBVARS": {
                 return "";
@@ -81,14 +81,6 @@ public class IntermediateCodeGenerator {
                 }
             }
 
-            case "CONST": {
-                if (node.children.get(0).symbol.equals("N")) {
-                    return " " + node.children.get(0).children.get(0).symbol + " ";
-                } else if (node.children.get(0).symbol.equals("T")) {
-                    return " " + node.children.get(0).children.get(0).symbol + " ";
-                }
-            }
-
             case "ASSIGN": {
                 if (node.children.get(1).symbol.equals("<")) {
                     return "INPUT " + translate(node.children.get(0));
@@ -106,14 +98,6 @@ public class IntermediateCodeGenerator {
                 String p2 = translate(node.children.get(4));
                 String p3 = translate(node.children.get(6));
                 return "CALL_ " + FNAME + "(" + p1 + "," + p2 + "," + p3 + ")";
-            }
-
-            case "ARG": {
-                if (node.children.get(0).symbol.equals("ATOMIC")) {
-                    return translate(node.children.get(0));
-                } else if (node.children.get(0).symbol.equals("OP")) {
-                    return translate(node.children.get(0));
-                }
             }
 
             case "UNOP": {
@@ -186,6 +170,22 @@ public class IntermediateCodeGenerator {
                     String code2 = translate(node.children.get(4), place2);
                     String op = translate(node.children.get(0));
                     return code1 + code2 + " " + place + " := " + place1 + " " + op + " " + place2;
+                }
+            }
+
+            case "CONST": {
+                if (node.children.get(0).tokenClass.equals("N")) {
+                    return place + " := " +  node.children.get(0).symbol+ "\n";
+                } else if (node.children.get(0).tokenClass.equals("T")) {
+                    return place + " := " + node.children.get(0).symbol + "\n";
+                }
+            }
+
+            case "ARG": {
+                if (node.children.get(0).symbol.equals("ATOMIC")) {
+                    return translate(node.children.get(0), place);
+                } else if (node.children.get(0).symbol.equals("OP")) {
+                    return translate(node.children.get(0), place);
                 }
             }
         }
