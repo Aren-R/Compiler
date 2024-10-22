@@ -2,6 +2,21 @@ Symbol Table
 -------------------------------------------------------------
 Key             Name            Type           
 -------------------------------------------------------------
+func_1          F_another       void           
+func_0          F_compute       num            
+var_8           V_temp2         text           
+var_9           V_temp3         num            
+var_4           V_a             num            
+var_10          V_d             num            
+var_5           V_b             num            
+var_6           V_c             num            
+var_7           V_temp1         num            
 var_0           V_x             num            
 var_1           V_msg           text           
 var_2           V_y             num            
+var_3           V_res           num            
+var_15          V_msg           text           
+var_14          V_product       num            
+var_13          V_sum           num            
+var_12          V_f             num            
+var_11          V_e             num            

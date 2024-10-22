@@ -69,6 +69,9 @@ public class Lexer{
                     throw new InvalidTokenException(RED + "Error at line " + lineNumber + ": Invalid token '" + token.contents + "'" + ANSI_RESET);
                 }
             } else {
+                if (currentChar.equals("<")) {
+                    currentChar = "&lt;";
+                }
                 token.addToToken(currentChar);
             }
 

@@ -199,11 +199,13 @@ public class States {
         states[60].classType = "reserved_word";
 
         states[0].transitions.put("<", states[61]); //<
-        states[61].transitions.put("i", states[62]); //<i
-        states[62].transitions.put("n", states[63]); //<in
-        states[63].transitions.put("p", states[64]); //<inp
-        states[64].transitions.put("u", states[65]); //<inpu
-        states[65].transitions.put("t", states[66]); //<input
+        states[61].isAccepting = true; //<
+        states[61].classType = "reserved_word";
+        states[0].transitions.put("i", states[67]); //i
+        states[67].transitions.put("n", states[63]); //in
+        states[63].transitions.put("p", states[64]); //inp
+        states[64].transitions.put("u", states[65]); //inpu
+        states[65].transitions.put("t", states[66]); //input
         states[66].isAccepting = true; //<input
         states[66].classType = "reserved_word";
         //RESERVED WORDS===========================================================
@@ -283,6 +285,7 @@ public class States {
         states[102].transitions.put("0", states[102]); //.0
         states[102].transitions.put("123456789", states[103]); //.[0-9]*[1-9]
         states[103].transitions.put("0", states[102]); //.[0-9]*[1-9]
+        states[103].transitions.put("123456789", states[103]); 
         states[103].isAccepting = true;
         states[103].classType = "N";
         //CLASS N==================================================================
