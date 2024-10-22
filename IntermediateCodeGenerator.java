@@ -179,7 +179,7 @@ public class IntermediateCodeGenerator {
 
             case "ATOMIC": {
                 if (node.children.get(0).symbol.equals("VNAME")) {
-                    return "\n" + place + " := " + translate(node.children.get(0))+ "\n";
+                    return "\n" + place + " := " + translate(node.children.get(0));
                 } else if (node.children.get(0).symbol.equals("CONST")) {
                     return translate(node.children.get(0), place);
                 }
@@ -187,9 +187,9 @@ public class IntermediateCodeGenerator {
 
             case "CONST": {
                 if (node.children.get(0).tokenClass.equals("N")) {
-                    return "\n" + place + " := " +  node.children.get(0).symbol+ "\n";
+                    return "\n" + place + " := " +  node.children.get(0).symbol;
                 } else if (node.children.get(0).tokenClass.equals("T")) {
-                    return "\n" + place + " := " + node.children.get(0).symbol + "\n";
+                    return "\n" + place + " := " + node.children.get(0).symbol;
                 }
             }
         }
@@ -205,7 +205,7 @@ public class IntermediateCodeGenerator {
                 String place2 = newVar();
                 String code1 = translate(SIMPLE.children.get(2), place1);
                 String code2 = translate(SIMPLE.children.get(4), place2);
-                return code1 + " " + code2 + "\nIF " + place1 + " " + op + " " + place2 + " THEN " + L1 + " ELSE " + L2 + "\n";
+                return code1 + " " + code2 + "\nIF " + place1 + " " + op + " " + place2 + " THEN " + L1 + " ELSE " + L2;
         
 
                 // if (op.equals(" && ")) {
