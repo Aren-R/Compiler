@@ -52,7 +52,7 @@ public class IntermediateCodeGenerator {
             }
 
             case "FNAME": {
-                return node.children.get(0).children.get(0).symbol;
+                return node.children.get(0).symbol;
             }
 
             case "PROG": {
@@ -67,6 +67,10 @@ public class IntermediateCodeGenerator {
                 } else if (node.children.get(0).symbol.equals("CONST")) {
                     return translate(node.children.get(0));
                 }
+            }
+
+            case "CONST": {
+                return node.children.get(0).symbol;
             }
 
             case "ALGO": {
@@ -114,10 +118,15 @@ public class IntermediateCodeGenerator {
 
             case "CALL": {
                 String FNAME = translate(node.children.get(0));
-                String p1 = translate(node.children.get(2));
-                String p2 = translate(node.children.get(4));
-                String p3 = translate(node.children.get(6));
-                return "CALL_ " + FNAME + "(" + p1 + "," + p2 + "," + p3 + ")\n";
+                String place1 = newVar();
+                String place2 = newVar();
+                String place3 = newVar();
+                
+                String code1 = translate(node.children.get(2), place1); 
+                String code2 = translate(node.children.get(4), place2);
+                String code3 = translate(node.children.get(6), place3);
+
+                return code1 + code2 + code3 + "CALL_ " + FNAME + "(" + place1 + ", " + place2 + ", " + place3 + ")\n";
             }
 
             case "UNOP": {
@@ -197,6 +206,19 @@ public class IntermediateCodeGenerator {
                     String op = translate(node.children.get(0));
                     return code1 + code2 + " \n" + place + " := " + place1 + " " + op + " " + place2;
                 }
+            }
+
+            case "CALL": {
+                String FNAME = translate(node.children.get(0));
+                String place1 = newVar();
+                String place2 = newVar();
+                String place3 = newVar();
+
+                String code1 = translate(node.children.get(2), place1); 
+                String code2 = translate(node.children.get(4), place2);
+                String code3 = translate(node.children.get(6), place3);
+
+                return code1 + code2 + code3 + "\n"+ place + " := " + "CALL_ " + FNAME + "(" + place1 + ", " + place2 + ", " + place3 + ")\n";
             }
 
 
