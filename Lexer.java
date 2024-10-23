@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Lexer{
     public String inputStream;
@@ -13,7 +14,11 @@ public class Lexer{
 
 
     public Lexer() {
-        String inputFilePath = "input.txt";
+        //ask user for input file name
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("\nEnter the input file name: ");
+        String inputFilePath = scanner.nextLine();
+        scanner.close();
         StringBuilder inputStream = new StringBuilder();
         
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath))) {
