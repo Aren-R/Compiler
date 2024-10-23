@@ -53,8 +53,8 @@ v_26 := var_2
 v_24 := v_25 - v_26
 var_2 := v_24
 REM END
-GOTO 
-L_6LABELL_5
+GOTO L_6
+LABEL L_5
 REM END
 LABEL L_6
 REM END

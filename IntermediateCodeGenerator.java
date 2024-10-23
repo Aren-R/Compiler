@@ -165,7 +165,7 @@ public class IntermediateCodeGenerator {
                     String code1 = translateCond(node.children.get(1), L1, L2);
                     String code2 = translate(node.children.get(3));
                     String code3 = translate(node.children.get(5));
-                    return code1 + "LABEL " + L1 + "\n" + code2 + "GOTO " + "\n" + L3  + "LABEL" + L2  + "\n" + code3 + "LABEL " + L3 + "\n";
+                    return code1 + "LABEL " + L1 + "\n" + code2 + "GOTO " + L3 + "\n"   + "LABEL " + L2  + "\n" + code3 + "LABEL " + L3 + "\n";
                 }
                 if (node.children.get(1).children.get(0).symbol.equals("COMPOSIT")) {
                     String L1 = newLabel();
