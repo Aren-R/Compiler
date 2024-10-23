@@ -55,6 +55,7 @@ public class TypeChecker {
                         return true;
                     } else {
                         System.out.println(RED + "Type Error: print statement type mismatch" + RESET);
+                        System.exit(1);
                         return false;
                     }
                 }
@@ -65,12 +66,14 @@ public class TypeChecker {
                     if (FTYPofFunc.equals("void")) {
                         System.err.println(RED + "Error: \"return\" in void function" + RESET);
                         System.err.println();
+                        System.exit(1);
                         return false;
                     }
                     if (FTYPofFunc.equals(typeOf(node.children.get(1))) && typeOf(node.children.get(1)).equals("num")) {
                         return true;
                     } else {
                         System.out.println(RED + "Error: \"return\" statement type mismatch" + RESET);
+                        System.exit(1);
                         return false;
                     }
                 }
@@ -83,6 +86,8 @@ public class TypeChecker {
                     if (typeOf(node.children.get(0)).equals("void")) {
                         return true;
                     } else {
+                        System.out.println(RED + "Type Error: function call in command statement is not of type void" + RESET);
+                        System.exit(1);
                         return false;
                     }
                 }
@@ -100,7 +105,8 @@ public class TypeChecker {
                         return true;
                     } else {
                         System.out.println(RED + "Type Error: assignment type mismatch" + RESET);
-                        System.out.println(RED + "\""+ lookup(node.children.get(0).children.get(0).symbol) + "\" is not of type " + "\"" + TERMtype + "\"" + RESET);    
+                        System.out.println(RED + "\""+ lookup(node.children.get(0).children.get(0).symbol) + "\" is not of type " + "\"" + TERMtype + "\"" + RESET);  
+                        System.exit(1);  
                         return false;
                     }
                 }
@@ -116,6 +122,7 @@ public class TypeChecker {
                 } else {
                     System.out.println(RED + "Type Error: condition in branch statement is not a boolean" + RESET);
                     System.out.println(RED + "At: \"if" + node.children.get(1).children.get(0).symbol + RESET);
+                    System.exit(1);
                     return false;
                 }
             }
@@ -140,6 +147,7 @@ public class TypeChecker {
                     return true;
                 } else {
                     System.out.println(RED + "Type Error: function arguments type mismatch" + RESET);
+                    System.exit(1);
                     return false;
                 }   
             }

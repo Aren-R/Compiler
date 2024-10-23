@@ -126,7 +126,7 @@ public class IntermediateCodeGenerator {
                 String code2 = translate(node.children.get(4), place2);
                 String code3 = translate(node.children.get(6), place3);
 
-                return code1 + code2 + code3 + "CALL_ " + FNAME + "(" + place1 + ", " + place2 + ", " + place3 + ")\n";
+                return code1 + code2 + code3 + "\nCALL_ " + FNAME + "(" + place1 + ", " + place2 + ", " + place3 + ")\n";
             }
 
             case "UNOP": {

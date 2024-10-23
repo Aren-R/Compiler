@@ -4,7 +4,6 @@
 ### Assumptions
 - Each token is seperated by a space (parentheses, commas, and semicolons cannot follow directly after another token), a space needs to be between them.
 - You may have endlines and tabs
-- Text HAS to be surrounded by inverted commas: ```"Example"```
 
 ### Output
 - At each stage a file is generated for each output:

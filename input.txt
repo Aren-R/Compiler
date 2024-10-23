@@ -1,20 +1,47 @@
 main
-text V_x ,
-num V_y ,
-num V_z ,
-
+num V_a , text V_b , num V_c , num V_d , 
 begin
-F_x ( V_z , 10.11 , "Test" ) ; print V_x ; V_y = and ( not ( V_z ) , V_x ) ;  
-end
-num F_x ( V_a , V_b , V_c ) {
-num V_d ,
-num V_e ,
-text V_f ,
+    V_a = 6.7734 ;
+    V_b = "Test" ;
+    V_c = 8 ;
 
-begin
- 
+    V_d = F_calculate ( V_a , 9.32 , V_c ) ;
+    V_d < input ;
+
+    if and ( eq ( V_a , V_c ) , grt ( V_a , 40.1 ) ) then
+        begin
+            print V_b ;
+        end
+    else
+        begin
+            if eq ( V_a , V_c ) then
+                begin
+                    V_a = sqrt ( 99 ) ;
+                    V_c = add ( 0 , 450.1 ) ;
+                    V_a = mul ( 3 , V_c ) ;
+                    V_c = div ( V_a , 8 ) ;
+                    V_c = sub ( V_a , V_c ) ;
+                end
+            else
+                begin
+                end ;
+        end ;
+    
 end
 
+num F_calculate ( V_a , V_b , V_c ) {
+    num V_t1 , text V_t2 , num V_t3 ,
+    begin
+        V_t1 = add ( V_a , V_b ) ;
+        if grt ( V_c , V_t1 ) then
+            begin
+                return V_c ;
+            end
+        else
+            begin
+                V_a = F_calculate ( 8 , 10 , V_c ) ;
+            end ;
+    end
 }
 
 end
