@@ -377,10 +377,16 @@ public class TypeChecker {
     }
 
     public void parameterError(TreeNode node) {
+        String symbol;
         TreeNode VNAME = node.children.get(0);
         TreeNode V = VNAME.children.get(0);
-        String symbol = lookup(V.symbol);
+        if (V.tokenClass.equals("T") || V.tokenClass.equals("N")) {
+            symbol = V.symbol;
+        } else {
+            symbol = lookup(V.symbol);
+        }
         System.out.println(RED + "Type Error: function argument " + symbol + " is not of type num" + RESET);
+        System.exit(1);
     }
 }
 
